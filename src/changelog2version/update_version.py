@@ -76,7 +76,7 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument('--version_file_type',
                         dest='version_file_type',
                         required=False,
-                        choices=['python'],
+                        choices=['py'],
                         help='Type of version file to generate')
 
     parsed_args = parser.parse_args()
