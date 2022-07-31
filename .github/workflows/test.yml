@@ -54,7 +54,7 @@ jobs:
         changelog2version \
           --changelog_file changelog.md \
           --version_file src/changelog2version/version.py \
-          --version_file_type python \
+          --version_file_type py \
           --debug
         python -m build .
     - name: Test built package
