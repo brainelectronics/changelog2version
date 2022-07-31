@@ -1,0 +1,4 @@
+# List external packages here
+# Avoid fixed versions
+# to parse changelog semver
+semver>=2.13.0,<3
