@@ -1,7 +1,7 @@
 # this file is *not* meant to cover or endorse the use of GitHub Actions, but rather to
 # help make automated releases for this project
 
-name: Release
+name: Upload Python Package
 
 on:
   push:
@@ -30,7 +30,7 @@ jobs:
         pip install .
     - name: Build package
       run: |
-        update_version \
+        changelog2version \
           --changelog_file changelog.md \
           --version_file src/changelog2version/version.py \
           --version_file_type py \
