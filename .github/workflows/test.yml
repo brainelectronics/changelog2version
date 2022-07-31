@@ -3,7 +3,15 @@
 
 name: Test
 
-on: [push, pull_request]
+# on: [push, pull_request]
+on:
+  push:
+    branches-ignore:
+      - 'main'
+      - 'develop'
+
+permissions:
+  contents: read
 
 jobs:
   test:
@@ -20,6 +28,39 @@ jobs:
       with:
         python-version: ${{ matrix.python }}
     - name: Install test dependencies
-      run: python -m pip install -U tox
-    - name: Test
+      run: |
+        python -m pip install .[dev]
+        python -m pip install .[test]
+    - name: Test with tox
       run: python -m tox -e py
+    - name: Test with nose2
+      run: |
+        python create_report_dirs.py
+        nose2 --config tests/unittest.cfg
+        coverage xml
+        coverage html
+     - name: Install deploy dependencies
+      run: |
+        python -m pip install -U setuptools wheel build
+        if [ -f requirements-deploy.txt ]; then pip install -r requirements-deploy.txt; fi
+        pip install .
+    - name: Build package
+      run: |
+        changelog2version \
+          --changelog_file changelog.md \
+          --version_file src/changelog2version/version.py \
+          --version_file_type py \
+          --debug
+        python -m build .
+    - name: Test built package
+      run: |
+        twine check dist/*.tar.gz
+    - name: Archive build package artifact
+      uses: actions/upload-artifact@v3
+      with:
+        # https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+        # ${{ github.repository }} and ${{ github.ref_name }} can't be used for artifact name due to unallowed '/'
+        name: dist_repo.${{ github.event.repository.name }}_sha.${{ github.sha }}_build.${{ github.run_number }}
+        # _py.${{ matrix.python-version }}
+        path: dist/*.tar.gz
+        retention-days: 14
