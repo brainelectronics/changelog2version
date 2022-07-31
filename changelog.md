@@ -22,6 +22,8 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Update root [`README`](README.md) file with usage instructions
 - Use `0.0.0` as default in the checked in
   [package version file](src/changelog2version/version.py)
+- Use `release/v1.5` branch of `pypa/gh-action-pypi-publish` in the
+  [GitHub CI release workflow](.github/workflows/release.yml) file
 
 ## [0.1.0] - 2022-07-31
 ### Added
