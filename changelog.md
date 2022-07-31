@@ -17,6 +17,14 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 -->
 
 ## Released
+## [0.1.1] - 2022-07-31
+### Fixed
+- Update root [`README`](README.md) file with usage instructions
+- Use `0.0.0` as default in the checked in
+  [package version file](src/changelog2version/version.py)
+- Use `release/v1.5` branch of `pypa/gh-action-pypi-publish` in the
+  [GitHub CI release workflow](.github/workflows/release.yml) file
+
 ## [0.1.0] - 2022-07-31
 ### Added
 - This changelog file
@@ -31,7 +39,6 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - [`.gitignore`](.gitignore) file after fork to latest
   [Python gitignore template][ref-python-gitignore-template]
 - [`setup.py`](setup.py) file after fork
-- [`README`](README.md) file with usage instructions
 - [`tox.ini`](tox.ini) file after fork to use `nose2` and create coverage
   report
 - [GitHub CI release workflow](.github/workflows/release.yml) updated to run
@@ -46,8 +53,9 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Data folder after fork
 
 <!-- Links -->
-[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.1.0...develop
+[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.1.1...develop
 
+[0.1.1]: https://github.com/brainelectronics/changelog2version/tree/0.1.1
 [0.1.0]: https://github.com/brainelectronics/changelog2version/tree/0.1.0
 
 <!--
