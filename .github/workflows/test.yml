@@ -63,6 +63,7 @@ jobs:
         twine check dist/*.tar.gz
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
+      if: ${{ matrix.python-version == '3.9' }}
       with:
         # token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./reports/coverage/
@@ -71,7 +72,7 @@ jobs:
         # files: ./coverage1.xml,./coverage2.xml
         flags: unittests
         # name: codecov-umbrella
-        path_to_write_report: ./reports/coverage/codecov_report.txt
+        # path_to_write_report: ./reports/coverage/codecov_report.txt
         verbose: true
     - name: Archive build package artifact
       uses: actions/upload-artifact@v3
