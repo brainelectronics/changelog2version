@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: UTF-8 -*-
-"""Unittest for testing the update_version file"""
+"""Unittest for testing the extract_version file"""
 
 import logging
 from nose2.tools import params
@@ -9,10 +9,11 @@ from sys import stdout
 import unittest
 from unittest.mock import patch, mock_open
 
-from changelog2version import update_version
+from changelog2version.extract_version import ExtractVersion, \
+    ExtractVersionError
 
 
-class TestUpdateVersion(unittest.TestCase):
+class TestExtractVersion(unittest.TestCase):
 
     def setUp(self) -> None:
         """Run before every test method"""
@@ -35,50 +36,78 @@ class TestUpdateVersion(unittest.TestCase):
 
         self._here = Path(__file__).parent
 
+        self.ev = ExtractVersion()
+
     def tearDown(self) -> None:
         """Run after every test method"""
         pass
 
-    def test_parse_changelog_file(self) -> None:
+    def test_version_line_regex(self) -> None:
+        """Test property version_line_regex"""
+        self.ev.version_line_regex = "gray|grey"
+
+        with self.assertRaises(ExtractVersionError) as context:
+            self.ev.version_line_regex = "["
+
+        self.assertEqual("Invalid regex pattern", str(context.exception))
+
+    def test_semver_line_regex(self) -> None:
+        """Test property semver_regex"""
+        self.ev.semver_line_regex = "gray|grey"
+
+        with self.assertRaises(ExtractVersionError) as context:
+            self.ev.semver_line_regex = "["
+
+        self.assertEqual("Invalid regex pattern", str(context.exception))
+
+    @unittest.skip("Not yet implemented")
+    def test__create_logger(self):
+        """Test logger creation"""
+        pass
+
+    @params(
+        ("changelog_with_date.md", "## [1.2.3] - 2022-07-31"),
+        ("changelog_with_date_and_time.md", "## [93.10.1] - 2022-07-31")
+    )
+    def test_parse_changelog_file(self,
+                                  file_name: str,
+                                  expectation: str) -> None:
         """Test parse_changelog"""
-        valid_changelogs_directory = self._here / 'data' / 'valid'
-        valid_changelogs = [x for x in valid_changelogs_directory.iterdir()
-                            if x.is_file()]
+        changelog = self._here / 'data' / 'valid' / file_name
 
-        for changelog in valid_changelogs:
-            expectation = changelog.stem
-            result = update_version.parse_changelog(changelog_file=changelog,
-                                                    logger=self.package_logger)
-            self.test_logger.debug('Extracted "{}" from "{}"'.
-                                   format(result, changelog.name))
+        result = self.ev.parse_changelog(changelog_file=changelog)
+        self.test_logger.debug('Extracted "{}" from "{}"'.
+                               format(result, changelog.name))
 
-            self.assertIsInstance(result, str)
-            self.assertEqual(expectation, result)
+        self.assertIsInstance(result, str)
+        self.assertEqual(expectation, result)
 
     @params(
         # valid release version lines
-        ("## [0.2.0] - 2022-05-19", "0.2.0"),
-        ("## [1.0.0] - 2022-07-21", "1.0.0"),
-        ("## [99.42.12] - 1900-01-01", "99.42.12"),
+        ("## [0.2.0] - 2022-05-19", "## [0.2.0] - 2022-05-19"),
+        ("## [1.0.0] - 2022-07-21", "## [1.0.0] - 2022-07-21"),
+        ("## [99.42.12] - 1900-01-01", "## [99.42.12] - 1900-01-01"),
+        ("## [107.3.18] - 1900-01-01 12:34:56",
+         "## [107.3.18] - 1900-01-01"),
         ("## [123456789.123456789.123456789] - 1001-01-01",
-         "123456789.123456789.123456789"),
+         "## [123456789.123456789.123456789] - 1001-01-01"),
         # invalid release version lines
-        ("## [1.2.c] - 1900-01-01", "0.0.0"),
-        ("## [1.b.c] - 1900-01-01", "0.0.0"),
-        ("## [a.b.c] - 1900-01-01", "0.0.0"),
-        ("## [1.2.] - 1900-01-01", "0.0.0"),
-        ("## [1.b.] - 1900-01-01", "0.0.0"),
-        ("1.2.c", "0.0.0"),
-        ("1.b.c", "0.0.0"),
-        ("1.2.3", "0.0.0"),
-        ("a.b.c", "0.0.0"),
+        ("## [1.2.c] - 1900-01-01", ""),
+        ("## [1.b.c] - 1900-01-01", ""),
+        ("## [a.b.c] - 1900-01-01", ""),
+        ("## [1.2.] - 1900-01-01", ""),
+        ("## [1.b.] - 1900-01-01", ""),
+        ("1.2.c", ""),
+        ("1.b.c", ""),
+        ("1.2.3", ""),
+        ("a.b.c", ""),
         # valid version line, but invalid changelog version lines
-        ("[1.2.0] - 1900-01-01", "0.0.0"),
-        ("## [1.2.3] - 19-01-01", "0.0.0"),
-        ("## [1.3.0] - 1900-1-01", "0.0.0"),
-        ("## [1.4.7] - 1900-01-1", "0.0.0"),
-        ("## [1.5.8] - 1900-1-1", "0.0.0"),
-        ("## [1.6.0] - 19-1-1", "0.0.0"),
+        ("[1.2.0] - 1900-01-01", ""),
+        ("## [1.2.3] - 19-01-01", ""),
+        ("## [1.3.0] - 1900-1-01", ""),
+        ("## [1.4.7] - 1900-01-1", ""),
+        ("## [1.5.8] - 1900-1-1", ""),
+        ("## [1.6.0] - 19-1-1", ""),
         # there will be a problem on the first of January 10.000 :)
     )
     def test_parse_changelog_line(self, line: str, expectation: str) -> None:
@@ -94,9 +123,7 @@ class TestUpdateVersion(unittest.TestCase):
         """
         changelog_file = '/dev/null'
         with patch('builtins.open', mock_open(read_data=line)):
-            result = update_version.parse_changelog(
-                changelog_file=changelog_file,
-                logger=self.package_logger)
+            result = self.ev.parse_changelog(changelog_file=changelog_file)
             self.test_logger.debug('Extracted "{}" from "{}"'.
                                    format(result, changelog_file))
 
@@ -138,28 +165,11 @@ class TestUpdateVersion(unittest.TestCase):
         :param      expectation:    Expected, parsed result
         :type       expectation:    str
         """
-        result = update_version.parse_semver_line(release_version_line=line,
-                                                  logger=self.package_logger)
+        result = self.ev.parse_semver_line(release_version_line=line)
         self.test_logger.debug('Extracted "{}" from "{}"'.format(result, line))
 
         self.assertIsInstance(result, str)
         self.assertEqual(expectation, result)
-
-    @unittest.skip("Not yet implemented")
-    def test_create_version_info_line(self) -> None:
-        pass
-
-    @unittest.skip("Not yet implemented")
-    def test_update_version_file(self) -> None:
-        pass
-
-    @unittest.skip("Not yet implemented")
-    def test_parse_arguments(self) -> None:
-        pass
-
-    @unittest.skip("Not yet implemented")
-    def test_parser_valid_file(self) -> None:
-        pass
 
 
 if __name__ == '__main__':
