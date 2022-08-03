@@ -7,8 +7,6 @@ from pathlib import Path
 from sys import stdout
 import unittest
 
-from changelog2version import update_version
-
 
 class TestUpdateVersion(unittest.TestCase):
 
