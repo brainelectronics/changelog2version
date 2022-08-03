@@ -33,6 +33,7 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Extend usage example in [`README`](README.md) file
 - Rename [test data changelog files](tests/data/valid)
 - Split unittest for `ExtractVersion` from `update_version` test
+- Let the pipeline fail is there are flake8 violations
 
 ## [0.1.1] - 2022-07-31
 ### Fixed
