@@ -66,10 +66,10 @@ jobs:
       if: ${{ matrix.python-version == '3.9' }}
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        directory: ./reports/coverage/
+        # directory: ./reports/coverage/
         env_vars: OS,PYTHON
         # fail_ci_if_error: true  # default is false
-        # files: ./coverage1.xml,./coverage2.xml
+        files: ./reports/coverage/coverage.xml
         flags: unittests
         # name: codecov-umbrella
         # path_to_write_report: ./reports/coverage/codecov_report.txt
