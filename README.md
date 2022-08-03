@@ -32,6 +32,25 @@ changelog2version \
     --debug
 ```
 
+## Advanced
+
+### Custom regular expressions
+To extract a version line from a given changelog file with an alternative
+regex, the `version_line_regex` argument can be used as shown below. The
+expression is validated during the CLI argument parsing
+
+```bash
+changelog2version \
+    --changelog_file changelog.md \
+    --version_file src/changelog2version/version.py \
+    --version_line_regex "^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\]" \
+    --debug
+```
+
+Same applies for a custom semver line regex in order to extract the semantic
+version part from a full version line, use the `semver_line_regex` argument to
+adjust the regular expression to your needs.
+
 ## Credits
 
 Based on the [PyPa sample project][ref-pypa-sample].
