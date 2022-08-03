@@ -17,6 +17,23 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 -->
 
 ## Released
+## [0.2.0] - 2022-08-03
+### Added
+- [`ExtractVersion class`](src/changelog2version/extract_version.py) to
+  extract the version line from a changelog file and to parse the semver
+  content from a version line, see [#4][ref-issue-4]
+- `semver_line_regex` and `version_line_regex` args for `changelog2version` to
+  provide custom regular expressions to parse a version line from a changelog
+  and to extract the semver content from a line
+
+### Changed
+- Main parsing code of
+  [`update_version script`](src/changelog2version/update_version.py) moved to
+  new [`ExtractVersion class`](src/changelog2version/extract_version.py)
+- Extend usage example in [`README`](README.md) file
+- Rename [test data changelog files](tests/data/valid)
+- Split unittest for `ExtractVersion` from `update_version` test
+
 ## [0.1.1] - 2022-07-31
 ### Fixed
 - Update root [`README`](README.md) file with usage instructions
@@ -53,12 +70,12 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Data folder after fork
 
 <!-- Links -->
-[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.1.1...develop
+[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.2.0...develop
 
+[0.2.0]: https://github.com/brainelectronics/changelog2version/tree/0.2.0
 [0.1.1]: https://github.com/brainelectronics/changelog2version/tree/0.1.1
 [0.1.0]: https://github.com/brainelectronics/changelog2version/tree/0.1.0
 
-<!--
-[ref-issue-1]: https://github.com/brainelectronics/changelog2version/issues/1
--->
+[ref-issue-4]: https://github.com/brainelectronics/changelog2version/issues/4
+
 [ref-python-gitignore-template]: https://github.com/github/gitignore/blob/e5323759e387ba347a9d50f8b0ddd16502eb71d4/Python.gitignore
