@@ -47,6 +47,24 @@ def parser_valid_file(parser: argparse.ArgumentParser, arg: str) -> str:
         return arg
 
 
+def validate_regex(parser: argparse.ArgumentParser, arg: str) -> str:
+    """
+    Validate given regex pattern
+    :param      parser:                 The parser
+    :type       parser:                 parser object
+    :param      arg:                    The regex pattern to check
+    :type       arg:                    str
+    :raise      argparse.ArgumentError: Argument is not a file
+    :returns:   Regex pattern, parser error is thrown otherwise.
+    :rtype:     str
+    """
+    try:
+        re.compile(arg)
+    except re.error:
+        parser.error("The regex pattern '{}' is invalid".format(arg))
+    return arg
+
+
 def parse_arguments() -> argparse.Namespace:
     """
     Parse CLI arguments.
@@ -80,6 +98,20 @@ def parse_arguments() -> argparse.Namespace:
                         required=False,
                         choices=['py'],
                         help='Type of version file to generate')
+
+    parser.add_argument('--version_line_regex',
+                        dest='version_line_regex',
+                        required=False,
+                        type=lambda x: validate_regex(parser, x),
+                        help='Regex to extract complete version line from a '
+                             'changelog')
+
+    parser.add_argument('--semver_line_regex',
+                        dest='semver_line_regex',
+                        required=False,
+                        type=lambda x: validate_regex(parser, x),
+                        help='Regex to extract semver part of from a version '
+                             'line')
 
     parsed_args = parser.parse_args()
 
@@ -150,11 +182,24 @@ def main():
 
     changelog_file = Path(args.changelog_file).resolve()
     version_file = Path(args.version_file).resolve()
+    version_line_regex = args.version_line_regex
+    semver_line_regex = args.semver_line_regex
 
     logger.debug("Using changelog file '{}' to update version file '{}'".
                  format(changelog_file, version_file))
 
     version_extractor = ExtractVersion(logger=logger)
+
+    if semver_line_regex:
+        logger.debug("Use this regex to get the semver part from the "
+                     "version line: {}".format(semver_line_regex))
+        version_extractor.semver_line_regex = semver_line_regex
+
+    if version_line_regex:
+        logger.debug("Use this regex to get the version line from the "
+                     "changelog file: {}".format(version_line_regex))
+        version_extractor.version_line_regex = version_line_regex
+
     version_line = version_extractor.parse_changelog(changelog_file)
     semver_string = version_extractor.parse_semver_line(version_line)
     version_info_line = create_version_info_line(semver_string, logger)
