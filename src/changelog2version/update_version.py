@@ -27,6 +27,8 @@ import re
 import semver
 from sys import stdout
 
+from .extract_version import ExtractVersion
+
 
 def parser_valid_file(parser: argparse.ArgumentParser, arg: str) -> str:
     """
@@ -82,69 +84,6 @@ def parse_arguments() -> argparse.Namespace:
     parsed_args = parser.parse_args()
 
     return parsed_args
-
-
-def parse_changelog(changelog_file: Path, logger: logging.Logger) -> str:
-    """
-    Parse the changelog for the first matching release version line
-
-    :param      changelog_file:  The path to the changelog file
-    :type       changelog_file:  Path
-    :param      logger:          Logger object
-    :type       logger:          logging.Logger
-
-    :returns:   Extracted semantic version string
-    :rtype:     str
-    """
-    release_version_line_regex = r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}"    # noqa
-    # append "$" to match only ISO8601 dates without additional timestamps
-    release_version_line = ""
-
-    with open(changelog_file, "r") as f:
-        for line in f:
-            match = re.search(release_version_line_regex, line)
-            if match:
-                release_version_line = match.group()
-                break
-
-    logger.debug("First matching release version line: '{}'".
-                 format(release_version_line))
-
-    return parse_semver_line(release_version_line, logger)
-
-
-def parse_semver_line(release_version_line: str,
-                      logger: logging.Logger) -> str:
-    """
-    Parse a release version line for a semantic version
-
-    :param      release_version_line:  The release version line as described
-    :type       release_version_line:  str
-    :param      logger:                Logger object
-    :type       logger:                logging.Logger
-
-    :returns:   Semantic version string
-    :rtype:     str
-    """
-    # release_version_line = "## [0.2.0] - 2022-05-19"
-    semver_regex = r"\[\d{1,}[.]\d{1,}[.]\d{1,}\]"
-    semver_string = "0.0.0"
-
-    # extract semver from release version line
-    match = re.search(semver_regex, release_version_line)
-    if match:
-        semver_string = match.group()
-        # remove '[' and ']' from semver_string
-        semver_string = re.sub(r"[\[\]]", "", semver_string)
-        if not semver.VersionInfo.isvalid(semver_string):
-            logger.error("Parsed SemVer string is invalid, check format")
-            raise ValueError("Invalid SemVer string")
-        logger.debug("Extracted SemVer string: '{}'".format(semver_string))
-    else:
-        logger.warning("No SemVer string found in given release version line")
-
-    # semver_string = "0.2.0"
-    return semver_string
 
 
 def create_version_info_line(semver_string: str,
@@ -215,7 +154,9 @@ def main():
     logger.debug("Using changelog file '{}' to update version file '{}'".
                  format(changelog_file, version_file))
 
-    semver_string = parse_changelog(changelog_file, logger)
+    version_extractor = ExtractVersion(logger=logger)
+    version_line = version_extractor.parse_changelog(changelog_file)
+    semver_string = version_extractor.parse_semver_line(version_line)
     version_info_line = create_version_info_line(semver_string, logger)
     update_version_file(version_file, version_info_line, logger)
 
