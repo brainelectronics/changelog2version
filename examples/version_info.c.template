@@ -1,0 +1,45 @@
+//
+//  {{ file_name }}
+//
+//  Rendered from {{ template_name }} by script on {{ creation_datetime }}
+//
+//  Created by {{ machine_name }}
+//
+
+#include <stdio.h>
+
+#define MAJOR_VERSION   {{ major_version }}
+#define MINOR_VERSION   {{ minor_version }}
+#define PATCH_VERSION   {{ patch_version }}
+
+void print_prerelease_data(void)
+{
+    printf("Prerelease data: {{ prerelease_data }}\n");
+}
+
+void print_build_data(void)
+{
+    printf("Prerelease data: {{ build_data }}\n");
+}
+
+void print_creation_datetime(void)
+{
+    printf("Creation datetime: {{ creation_datetime }}\n");
+}
+
+void print_creator(void)
+{
+    printf("Created by {{ machine_name }}\n");
+}
+
+int main(int argc, char const *argv[])
+{
+    printf("Script version is (major.minor.patch): %d.%d.%d\n", MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
+
+    print_prerelease_data();
+    print_build_data();
+    print_creation_datetime();
+    print_creator();
+
+    return 0;
+}
