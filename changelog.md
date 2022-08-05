@@ -20,12 +20,13 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 ## [0.3.0] - 2022-08-05
 ### Changed
 - Regex to extract the first version line from a changelog supports the full
-  feature scope of semantic versioning.
+  feature scope of semantic versioning, see [#8][ref-issue-8]
 - Regex to get the semantic versioning content of a version line supports the
-  full feature scope of semantic versioning.
+  full feature scope of semantic versioning, see [#8][ref-issue-8]
 - Testing of this package with `nose2` and coverage report generation with
   `coverage` including upload to [Codecov][ref-codecov-changelog2version] was
-  moved to new [GitHub CI unittest workflow](.github/workflows/unittest.yml)
+  moved to new [GitHub CI unittest workflow](.github/workflows/unittest.yml),
+  see [#11][ref-issue-11]
 
 ### Removed
 - `nose2` and `coverage` steps as well as upload to
@@ -93,6 +94,8 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 [0.1.1]: https://github.com/brainelectronics/changelog2version/tree/0.1.1
 [0.1.0]: https://github.com/brainelectronics/changelog2version/tree/0.1.0
 
+[ref-issue-8]: https://github.com/brainelectronics/changelog2version/issues/8
+[ref-issue-11]: https://github.com/brainelectronics/changelog2version/issues/11
 [ref-issue-4]: https://github.com/brainelectronics/changelog2version/issues/4
 
 [ref-codecov-changelog2version]: https://app.codecov.io/github/brainelectronics/changelog2version
