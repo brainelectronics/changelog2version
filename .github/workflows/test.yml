@@ -63,6 +63,9 @@ jobs:
         twine check dist/*.tar.gz
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
+      env:
+        OS: 'ubuntu-latest'
+        PYTHON: ${{ matrix.python-version }}
       if: ${{ matrix.python-version == '3.9' }}
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
