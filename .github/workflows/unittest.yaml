@@ -12,20 +12,24 @@ jobs:
   test-and-coverage:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: actions/setup-python@v3
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v3
       with:
         python-version: '3.9'
-    - name: Test and coverage
+    - name: Run tests
       run: |
         pip install .[test]
         python create_report_dirs.py
         nose2 --config tests/unittest.cfg
+    - name: Create coverage
+      run: |
         coverage xml
 
   upload-coverage:
     needs: test-and-coverage
-    runs-on: ubuntu-latest
+    steps:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
