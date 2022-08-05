@@ -1,3 +1,9 @@
+# created files based on README examples
+examples/*.c
+examples/*.h
+examples/*.py
+examples/version_info
+
 # custom, package specific ignores
 .DS_Store
 .DS_Store?
