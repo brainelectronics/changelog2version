@@ -4,6 +4,7 @@
 ![Release](https://img.shields.io/github/v/release/brainelectronics/changelog2version?include_prereleases&color=success)
 ![Python](https://img.shields.io/badge/python3-Ok-green.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![codecov](https://codecov.io/github/brainelectronics/changelog2version/branch/main/graph/badge.svg)](https://app.codecov.io/github/brainelectronics/changelog2version)
 
 Update version info file with latest changelog version entry
 
