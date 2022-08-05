@@ -40,9 +40,33 @@ class ExtractVersion(object):
             logger = self._create_logger()
         self._logger = logger
 
-        # append "$" to match only ISO8601 dates without additional timestamps
-        self._version_line_regex = r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}"    # noqa
-        self._semver_line_regex = r"\[\d{1,}[.]\d{1,}[.]\d{1,}\]"
+        self._semver_line_regex = (
+            r"^(?P<major>0|[1-9]\d*)\."     # major version part
+            r"(?P<minor>0|[1-9]\d*)\."      # minor version part
+            r"(?P<patch>0|[1-9]\d*)"        # bugfix/patch version part
+            # optional prerelease version part, starting with a "-"
+            r"(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?"    # noqa
+            # optional build metadata version part, starting with a "+"
+            r"(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
+        )
+
+        self._version_line_regex = (
+            # begin of line with two "#" followed by a single space
+            r"(?P<title_begin>\#\#)[ ]{1}"
+            # anything after a "["
+            r"\[(?P<potential_semver>("
+            # three numbers with one or more digits, seperated by dot
+            r"(\d{1,}\.\d{1,}\.\d{1,})"
+            r"([-+]?)"  # zero or one of either a "-" or "+" character
+            # r"(.*)"  # any character zero or more times
+            r"([a-zA-Z.+-d]*)"  # any character (a-Z), dot, "-", "+" or number
+                                # for zero or more times
+            r")(?=\]))\]"    # positive lookahead for the "]" and the "]"
+            r"[ ]{1}\-[ ]{1}"     # exactly one space, "-", exactly one space
+            r"(?P<datetime>\d{4}\-\d{2}-\d{2})"     # datetime as YYYY-MM-DD
+            r"(([T ]{1})"   # seperation between date and time by "T" or space
+            r"(?P<timestamp>\d{2,}:\d{2,}:\d{2,}?))?"   # time as HH:MM:SS
+        )
 
     @property
     def version_line_regex(self) -> str:
@@ -151,6 +175,7 @@ class ExtractVersion(object):
         Examples of a valid SemVer line:
         - "## [0.2.0] - 2022-05-19"
         - "## [107.3.18] - 1900-01-01 12:34:56"
+        - "## [1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay] - 2012-01-02"    # noqa
 
         :param      release_version_line:  The release version line
         :type       release_version_line:  str
@@ -160,12 +185,19 @@ class ExtractVersion(object):
         """
         semver_string = "0.0.0"
 
-        # extract semver from release version line
-        match = re.search(self.semver_line_regex, release_version_line)
+        # try to extract any content between square brackets
+        match = re.search(r"\[(.*?)\]", release_version_line)
+        if not match:
+            return semver_string
+
+        # the potential semver content is the first group of the complete line
+        potential_semver = match.group(1)
+
+        # try to extract semver from release version line
+        match = re.search(self.semver_line_regex, potential_semver)
+
         if match:
             semver_string = match.group()
-            # remove '[' and ']' from semver_string
-            semver_string = re.sub(r"[\[\]]", "", semver_string)
             if not semver.VersionInfo.isvalid(semver_string):
                 self._logger.error("Parsed SemVer string is invalid, check "
                                    "the changelog format")

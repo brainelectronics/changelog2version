@@ -17,11 +17,28 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 -->
 
 ## Released
+## [0.3.0] - 2022-08-05
+### Changed
+- Regex to extract the first version line from a changelog supports the full
+  feature scope of semantic versioning, resolve [#8][ref-issue-8]
+- Regex to get the semantic versioning content of a version line supports the
+  full feature scope of semantic versioning, resolve [#8][ref-issue-8]
+- Testing of this package with `nose2` and coverage report generation with
+  `coverage` including upload to [Codecov][ref-codecov-changelog2version] was
+  moved to new [GitHub CI unittest workflow](.github/workflows/unittest.yml),
+  resolve [#11][ref-issue-11]
+
+### Removed
+- `nose2` and `coverage` steps as well as upload to
+  [Codecov][ref-codecov-changelog2version] removed from
+  [GitHub CI release workflow](.github/workflows/release.yml) and
+  [GitHub CI test workflow](.github/workflows/test.yml)
+
 ## [0.2.0] - 2022-08-03
 ### Added
 - [`ExtractVersion class`](src/changelog2version/extract_version.py) to
   extract the version line from a changelog file and to parse the semver
-  content from a version line, see [#4][ref-issue-4]
+  content from a version line, resolve [#4][ref-issue-4]
 - `semver_line_regex` and `version_line_regex` args for `changelog2version` to
   provide custom regular expressions to parse a version line from a changelog
   and to extract the semver content from a line
@@ -71,12 +88,16 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Data folder after fork
 
 <!-- Links -->
-[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.2.0...develop
+[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.3.0...develop
 
+[0.3.0]: https://github.com/brainelectronics/changelog2version/tree/0.3.0
 [0.2.0]: https://github.com/brainelectronics/changelog2version/tree/0.2.0
 [0.1.1]: https://github.com/brainelectronics/changelog2version/tree/0.1.1
 [0.1.0]: https://github.com/brainelectronics/changelog2version/tree/0.1.0
 
+[ref-issue-8]: https://github.com/brainelectronics/changelog2version/issues/8
+[ref-issue-11]: https://github.com/brainelectronics/changelog2version/issues/11
 [ref-issue-4]: https://github.com/brainelectronics/changelog2version/issues/4
 
+[ref-codecov-changelog2version]: https://app.codecov.io/github/brainelectronics/changelog2version
 [ref-python-gitignore-template]: https://github.com/github/gitignore/blob/e5323759e387ba347a9d50f8b0ddd16502eb71d4/Python.gitignore
