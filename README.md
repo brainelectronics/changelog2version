@@ -54,7 +54,11 @@ adjust the regular expression to your needs.
 
 ## Credits
 
-Based on the [PyPa sample project][ref-pypa-sample].
+Based on the [PyPa sample project][ref-pypa-sample]. Also a big thank you to
+the creators and maintainers of [SemVer.org][ref-semver] for their
+documentation and [regex example][ref-semver-regex-example]
 
 <!-- Links -->
 [ref-pypa-sample]: https://github.com/pypa/sampleproject
+[ref-semver]: https://semver.org/
+[ref-semver-regex-example]: https://regex101.com/r/Ly7O1x/3/
