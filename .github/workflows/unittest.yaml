@@ -24,19 +24,6 @@ jobs:
     - name: Create coverage report
       run: |
         coverage xml
-    - uses: actions/cache@v3
-      with:
-        path: ./reports/coverage/coverage.xml
-        key: coverage-xml-report
-
-  upload-coverage:
-    needs: test-and-coverage
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/cache@v3
-      with:
-        path: ./reports/coverage/coverage.xml
-        key: coverage-xml-report
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
