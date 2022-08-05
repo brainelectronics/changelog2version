@@ -1,0 +1,14 @@
+//
+//  {{ file_name }}
+//
+//  Created automatically by script
+//
+
+#ifndef {{ file_name_without_suffix }}_h
+#define {{ file_name_without_suffix }}_h
+
+#define MAJOR_VERSION   {{ major_version }}     //< major software version
+#define MINOR_VERSION   {{ minor_version }}     //< minor software version
+#define PATCH_VERSION   {{ patch_version }}     //< patch software version
+
+#endif
