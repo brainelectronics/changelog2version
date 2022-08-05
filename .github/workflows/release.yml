@@ -43,3 +43,10 @@ jobs:
         skip_existing: true
         verbose: true
         print_hash: true
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        files: ./reports/coverage/coverage.xml
+        flags: unittests
+        verbose: true
