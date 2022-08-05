@@ -17,6 +17,32 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 -->
 
 ## Released
+## [0.4.0] - 2022-08-05
+### Added
+- Property `semver_data` to access extracted VersionInfo from parsed semver
+  line in [`ExtractVersion class`](src/changelog2version/extract_version.py)
+- Header and python version template file
+- [`RenderVersionFile class`](src/changelog2version/render_version_file.py) to
+  render template files with provided content, resolve [#5][ref-issue-5]
+- [Examples folder](examples) with example C script to demonstrate template
+  rendering on other files than python
+- `--template_file` argument to specify a custom template file for rendering
+- `--additional_template_data` to add custom data for the template rendering
+- `c` is now a valid and supported file type of `--version_file_type`
+- Documentation extended for new CLI args with more detailed examples
+- `Jinja2` is a required package for this package
+
+### Changed
+- `parser_valid_file` function returns a resolved path
+- `--version_file_type` is no longer case sensitive
+- `--version_file` does no longer have to exist
+
+### Removed
+- Functions to update python version files from `update_version.py` script
+
+### Fixed
+- Use only one job for the GitHub CI unittest workflow
+
 ## [0.3.0] - 2022-08-05
 ### Changed
 - Regex to extract the first version line from a changelog supports the full
@@ -88,13 +114,15 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Data folder after fork
 
 <!-- Links -->
-[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.3.0...develop
+[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.4.0...develop
 
+[0.4.0]: https://github.com/brainelectronics/changelog2version/tree/0.4.0
 [0.3.0]: https://github.com/brainelectronics/changelog2version/tree/0.3.0
 [0.2.0]: https://github.com/brainelectronics/changelog2version/tree/0.2.0
 [0.1.1]: https://github.com/brainelectronics/changelog2version/tree/0.1.1
 [0.1.0]: https://github.com/brainelectronics/changelog2version/tree/0.1.0
 
+[ref-issue-5]: https://github.com/brainelectronics/changelog2version/issues/5
 [ref-issue-8]: https://github.com/brainelectronics/changelog2version/issues/8
 [ref-issue-11]: https://github.com/brainelectronics/changelog2version/issues/11
 [ref-issue-4]: https://github.com/brainelectronics/changelog2version/issues/4
