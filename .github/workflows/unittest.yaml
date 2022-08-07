@@ -3,7 +3,7 @@
 
 name: Unittest Python Package
 
-on: push
+on: [push, pull_request]
 
 permissions:
   contents: read
@@ -30,4 +30,6 @@ jobs:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./reports/coverage/coverage.xml
         flags: unittests
+        fail_ci_if_error: true
+        path_to_write_report: ./reports/coverage/codecov_report.txt
         verbose: true
