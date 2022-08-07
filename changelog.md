@@ -17,7 +17,7 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 -->
 
 ## Released
-## [0.4.0] - 2022-08-05
+## [0.4.0] - 2022-08-07
 ### Added
 - Property `semver_data` to access extracted VersionInfo from parsed semver
   line in [`ExtractVersion class`](src/changelog2version/extract_version.py)
@@ -36,12 +36,16 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - `parser_valid_file` function returns a resolved path
 - `--version_file_type` is no longer case sensitive
 - `--version_file` does no longer have to exist
+- Run [GitHub CI unittest workflow](.github/workflows/unittest.yml) also on
+  pull requests
 
 ### Removed
 - Functions to update python version files from `update_version.py` script
 
 ### Fixed
-- Use only one job for the GitHub CI unittest workflow
+- Only one job in [GitHub CI unittest workflow](.github/workflows/unittest.yml)
+- Let [GitHub CI unittest workflow](.github/workflows/unittest.yml) fail when
+  Codecov runs into errors during upload
 
 ## [0.3.0] - 2022-08-05
 ### Changed
