@@ -2,11 +2,10 @@
 # -*- coding: UTF-8 -*-
 
 """
-Update version info in python version file with latest changelog version
+Update version info in template file with latest changelog version
 
 The changelog and package version shall always be aligned. This script can be
-used to update the version info line "__version_info__ = ..." of a version.py
-file with the latest changelog entry.
+used to render a python version file from the latest changelog entry.
 This changelog entry shall follow the semantic version pattern, see
 https://semver.org/ and shall match the following pattern:
 
@@ -16,11 +15,13 @@ The line shall start with two hashtags followed by a single space. The semver
 with x, y and z as non-negative integers, seperated by a dot and surrounded by
 square brackets. Followed by a space, a dash, another space and the ISO8601
 formatted date. Additional timestamps after the data, seperated from the date
-by a single space, are optional.
+by a single space or a capital "T", are optional.
+The semantic version tag inside the square brackets supports the full scope.
 """
 
 import argparse
 import fileinput
+import json
 import logging
 from pathlib import Path
 import re
@@ -28,9 +29,10 @@ import semver
 from sys import stdout
 
 from .extract_version import ExtractVersion
+from .render_version_file import RenderVersionFile
 
 
-def parser_valid_file(parser: argparse.ArgumentParser, arg: str) -> str:
+def parser_valid_file(parser: argparse.ArgumentParser, arg: str) -> Path:
     """
     Determine whether file exists.
     :param      parser:                 The parser
@@ -39,12 +41,12 @@ def parser_valid_file(parser: argparse.ArgumentParser, arg: str) -> str:
     :type       arg:                    str
     :raise      argparse.ArgumentError: Argument is not a file
     :returns:   Input file path, parser error is thrown otherwise.
-    :rtype:     str
+    :rtype:     Path
     """
     if not Path(arg).is_file():
         parser.error("The file {} does not exist!".format(arg))
     else:
-        return arg
+        return Path(arg).resolve()
 
 
 def validate_regex(parser: argparse.ArgumentParser, arg: str) -> str:
@@ -90,14 +92,27 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument('--version_file',
                         dest='version_file',
                         required=True,
-                        type=lambda x: parser_valid_file(parser, x),
-                        help='Path to version file')
+                        help='Path to rendered file')
 
     parser.add_argument('--version_file_type',
                         dest='version_file_type',
                         required=False,
-                        choices=['py'],
+                        choices=['py', 'c'],
+                        default='py',
+                        type=lambda x: x.lower(),
                         help='Type of version file to generate')
+
+    parser.add_argument('--template_file',
+                        dest='template_file',
+                        required=False,
+                        type=lambda x: parser_valid_file(parser, x),
+                        help='Path to template version file')
+
+    parser.add_argument('--additional_template_data',
+                        dest='additional_template_data',
+                        required=False,
+                        type=json.loads,
+                        help='Additional data as JSON to render the template')
 
     parser.add_argument('--version_line_regex',
                         dest='version_line_regex',
@@ -118,55 +133,6 @@ def parse_arguments() -> argparse.Namespace:
     return parsed_args
 
 
-def create_version_info_line(semver_string: str,
-                             logger: logging.Logger) -> str:
-    """
-    Create the version info line used in "version.py"
-
-    :param      semver_string:  The valid semver string
-    :type       semver_string:  str
-    :param      logger:         Logger object
-    :type       logger:         logging.Logger
-
-    :returns:   Complete version info line
-    :rtype:     str
-    """
-    # semver_string = "0.2.0"
-    ver = semver.VersionInfo.parse(semver_string)
-
-    version_info = (str(ver.major), str(ver.minor), str(ver.patch))
-    version_info_line = "__version_info__ = {}".format(version_info)
-    logger.debug("New version info line: '{}'".format(version_info_line))
-
-    # version_info_line = "__version_info__ = ('0', '2', '0')"
-    return version_info_line
-
-
-def update_version_file(version_file: Path,
-                        version_info_line: str,
-                        logger: logging.Logger) -> None:
-    """
-    Update the version file with a new version info line
-
-    :param      version_file:       The path to the version file
-    :type       version_file:       Path
-    :param      version_info_line:  The version info line
-    :type       version_info_line:  str
-    :param      logger:             Logger object
-    :type       logger:             logging.Logger
-    """
-    # standard output (print) is redirected to the original file
-    for line in fileinput.input(version_file, inplace=True):
-        if line.startswith("__version_info__ = "):
-            print(version_info_line, end="\n")
-        else:
-            # keep line ending
-            print(line, end="")
-
-    logger.debug("Version file '{}' updated with '{}'".
-                 format(version_file, version_info_line))
-
-
 def main():
     # parse CLI arguments
     args = parse_arguments()
@@ -180,8 +146,12 @@ def main():
     if args.debug:
         logger.setLevel(logging.DEBUG)
 
-    changelog_file = Path(args.changelog_file).resolve()
+    # changelog_file = Path(args.changelog_file).resolve()
+    changelog_file = args.changelog_file
     version_file = Path(args.version_file).resolve()
+    template_file = args.template_file
+    version_file_type = args.version_file_type
+    additional_template_data = args.additional_template_data
     version_line_regex = args.version_line_regex
     semver_line_regex = args.semver_line_regex
 
@@ -202,8 +172,39 @@ def main():
 
     version_line = version_extractor.parse_changelog(changelog_file)
     semver_string = version_extractor.parse_semver_line(version_line)
-    version_info_line = create_version_info_line(semver_string, logger)
-    update_version_file(version_file, version_info_line, logger)
+
+    file_renderer = RenderVersionFile()
+    semver_data = version_extractor.semver_data
+    version_file_content = {
+        "major_version": semver_data.major,
+        "minor_version": semver_data.minor,
+        "patch_version": semver_data.patch,
+        "prerelease_data": semver_data.prerelease,
+        "build_data": semver_data.build
+    }
+    if additional_template_data:
+        version_file_content.update(additional_template_data)
+
+    if not template_file:
+        # no template file specified, use package template file
+        template_file_map = {
+            "py": "version.py.template",
+            "c": "version.h.template",
+        }
+
+        if version_file_type in template_file_map:
+            template_file = template_file_map[version_file_type]
+            logger.info("Selected '{}' based on version_file_type: '{}'".
+                        format(template_file, version_file_type))
+        else:
+            raise KeyError("Either specify a custom template file or choose"
+                           "a template from this list: {}".
+                           format(template_file_map.keys()))
+
+    rendered_content = file_renderer.render_file(
+        template=template_file,
+        file_path=version_file,
+        content=version_file_content)
 
 
 if __name__ == '__main__':

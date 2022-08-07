@@ -9,7 +9,7 @@ from this line
 import logging
 from pathlib import Path
 import re
-import semver
+from semver import VersionInfo
 from sys import stdout
 from typing import Optional
 
@@ -21,24 +21,17 @@ class ExtractVersionError(Exception):
 
 class ExtractVersion(object):
     """Extract the version line and SemVer part from a changelog file"""
-    def __init__(self,
-                 # version_line_regex: Optional[str] = None,
-                 # semver_line_regex: Optional[str] = None,
-                 logger: Optional[logging.Logger] = None):
+    def __init__(self, logger: Optional[logging.Logger] = None):
         """
         Init ExtractVersion class
 
-        :param      version_line_regex: Regex for the complete version line
-        :type       version_line_regex: Optional[str]
-        :param      semver_line_regex:  Regex for the semver part of the
-                                        complete version line
-        :type       semver_line_regex:  Optional[str]
         :param      logger:             Logger object
         :type       logger:             Optional[logging.Logger]
         """
         if logger is None:
             logger = self._create_logger()
         self._logger = logger
+        self._semver_data = VersionInfo(*(0, 0, 0))
 
         self._semver_line_regex = (
             r"^(?P<major>0|[1-9]\d*)\."     # major version part
@@ -116,7 +109,31 @@ class ExtractVersion(object):
         except re.error:
             raise ExtractVersionError("Invalid regex pattern")
 
-    def _create_logger(self, logger_name: str = None) -> logging.Logger:
+    @property
+    def semver_data(self) -> VersionInfo:
+        """
+        Get VersionInfo object with latest SemVer data
+
+        :returns:   The version information
+        :rtype:     VersionInfo
+        """
+        return self._semver_data
+
+    @semver_data.setter
+    def semver_data(self, value: VersionInfo) -> None:
+        """
+        Set SemVer data
+
+        :param      value:  The value
+        :type       value:  VersionInfo
+        """
+        if isinstance(value, VersionInfo):
+            self._semver_data = value
+        else:
+            raise ExtractVersionError("Value is not of type VersionInfo")
+
+    @staticmethod
+    def _create_logger(logger_name: str = None) -> logging.Logger:
         """
         Create a logger
 
@@ -198,12 +215,13 @@ class ExtractVersion(object):
 
         if match:
             semver_string = match.group()
-            if not semver.VersionInfo.isvalid(semver_string):
+            if not VersionInfo.isvalid(semver_string):
                 self._logger.error("Parsed SemVer string is invalid, check "
                                    "the changelog format")
                 raise ValueError("Invalid SemVer string")
             self._logger.debug("Extracted SemVer string: '{}'".
                                format(semver_string))
+            self.semver_data = VersionInfo.parse(semver_string)
         else:
             self._logger.warning("No SemVer string found in given release "
                                  "version line: '{}'".

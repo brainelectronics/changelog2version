@@ -135,7 +135,8 @@ setup(
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/discussions/install-requires-vs-requirements/
     install_requires=[
-        "semver>=2.13.0,<3"
+        "semver>=2.13.0,<3",
+        "jinja2>=3.1.0,<4"
     ],  # Optional
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
@@ -160,6 +161,9 @@ setup(
     # package_data={  # Optional
     #     "sample": ["package_data.dat"],
     # },
+    package_data={
+        "changelog2version": ["templates/*"]
+    },
     # Although 'package_data' is the preferred approach, in some case you may
     # need to place data files outside of your packages. See:
     # http://docs.python.org/distutils/setupscript.html#installing-additional-files

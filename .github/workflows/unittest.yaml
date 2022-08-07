@@ -3,7 +3,7 @@
 
 name: Unittest Python Package
 
-on: push
+on: [push, pull_request]
 
 permissions:
   contents: read
@@ -24,23 +24,12 @@ jobs:
     - name: Create coverage report
       run: |
         coverage xml
-    - uses: actions/cache@v3
-      with:
-        path: ./reports/coverage/coverage.xml
-        key: coverage-xml-report
-
-  upload-coverage:
-    needs: test-and-coverage
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/cache@v3
-      with:
-        path: ./reports/coverage/coverage.xml
-        key: coverage-xml-report
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         files: ./reports/coverage/coverage.xml
         flags: unittests
+        fail_ci_if_error: true
+        # path_to_write_report: ./reports/coverage/codecov_report.txt
         verbose: true
