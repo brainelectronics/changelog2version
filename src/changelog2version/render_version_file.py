@@ -38,10 +38,22 @@ class RenderVersionFile(object):
 
     @property
     def default_template_path(self) -> Path:
+        """
+        Get path to default template folder
+
+        :returns:   Path to template folder
+        :rtype:     Path
+        """
         return self._default_template_path
 
     @default_template_path.setter
     def default_template_path(self, template_path: Union[Path, str]) -> None:
+        """
+        Set path to default template folder
+
+        :param      template_path:  The path to the template folder
+        :type       template_path:  Union[Path, str]
+        """
         template_path = Path(template_path)
         if template_path.exists():
             if template_path.is_dir():
