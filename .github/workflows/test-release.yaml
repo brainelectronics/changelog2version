@@ -29,7 +29,7 @@ jobs:
           --changelog_file changelog.md \
           --version_file src/changelog2version/version.py \
           --version_file_type py \
-          --additional_version_info="-rc${{github.run_number}}" \
+          --additional_version_info="-rc${{ github.run_number }}.dev${{ github.event.number }}" \
           --debug
         python -m build .
     - name: Test built package
