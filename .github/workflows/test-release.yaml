@@ -29,7 +29,7 @@ jobs:
           --changelog_file changelog.md \
           --version_file src/changelog2version/version.py \
           --version_file_type py \
-          --additional_version_info "-rc{github.run_attempt}"
+          --additional_version_info "-rc${{github.run_attempt}}"
           --debug
         python -m build .
         echo "Attempt: ${{ github.run_attempt }}"
