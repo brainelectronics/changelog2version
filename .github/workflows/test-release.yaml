@@ -32,9 +32,6 @@ jobs:
           --additional_version_info="-rc${{github.run_number}}" \
           --debug
         python -m build .
-        echo "Attempt: ${{ github.run_attempt }}"
-        echo "Number: ${{ github.run_number }}"
-        echo "ID: ${{ github.run_id }}"
     - name: Test built package
       run: |
         twine check dist/*.tar.gz
@@ -46,11 +43,11 @@ jobs:
         name: dist_py.${{ github.event.repository.name }}_sha.${{ github.sha }}_build.${{ github.run_number }}
         path: dist/*.tar.gz
         retention-days: 14
-    # - name: Publish package
-    #   uses: pypa/gh-action-pypi-publish@release/v1.5
-    #   with:
-    #     repository_url: https://test.pypi.org/legacy/
-    #     password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-    #     skip_existing: true
-    #     verbose: true
-    #     print_hash: true
+    - name: Publish package
+      uses: pypa/gh-action-pypi-publish@release/v1.5
+      with:
+        repository_url: https://test.pypi.org/legacy/
+        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+        skip_existing: true
+        verbose: true
+        print_hash: true
