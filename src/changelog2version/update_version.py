@@ -114,6 +114,12 @@ def parse_arguments() -> argparse.Namespace:
                         type=json.loads,
                         help='Additional data as JSON to render the template')
 
+    parser.add_argument('--additional_version_info',
+                        dest='additional_version_info',
+                        required=False,
+                        type=str,
+                        help='Additional version informations like "-rc1234"')
+
     parser.add_argument('--version_line_regex',
                         dest='version_line_regex',
                         required=False,
@@ -152,6 +158,7 @@ def main():
     template_file = args.template_file
     version_file_type = args.version_file_type
     additional_template_data = args.additional_template_data
+    additional_version_info = args.additional_version_info
     version_line_regex = args.version_line_regex
     semver_line_regex = args.semver_line_regex
 
@@ -175,12 +182,16 @@ def main():
 
     file_renderer = RenderVersionFile()
     semver_data = version_extractor.semver_data
+    additional_data = ""
+    if additional_version_info:
+        additional_data = " + '{}'".format(additional_version_info)
     version_file_content = {
         "major_version": semver_data.major,
         "minor_version": semver_data.minor,
         "patch_version": semver_data.patch,
         "prerelease_data": semver_data.prerelease,
-        "build_data": semver_data.build
+        "build_data": semver_data.build,
+        "additional_data": additional_data,
     }
     if additional_template_data:
         version_file_content.update(additional_template_data)

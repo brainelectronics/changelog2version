@@ -2,4 +2,4 @@
 # -*- coding: UTF-8 -*-
 
 __version_info__ = ("{{ major_version }}", "{{ minor_version }}", "{{ patch_version }}")
-__version__ = '.'.join(__version_info__)
+__version__ = '.'.join(__version_info__){{ additional_data }}

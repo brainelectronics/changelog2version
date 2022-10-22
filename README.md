@@ -24,6 +24,7 @@ Create version info files based on the latest changelog entry.
 - [Advanced](#advanced)
     - [Custom regular expressions](#custom-regular-expressions)
     - [Custom template file](#custom-template-file)
+    - [Additional version info content](#additional-version-info-content)
 - [Credits](#credits)
 
 <!-- /MarkdownTOC -->
@@ -173,6 +174,34 @@ Creation datetime: 2022-08-05T21:11:12
 Created by Death Star
 ```
 
+### Additional version info content
+
+To create custom release candidate packages the python version file variable
+`__version__` can be exended with a custom string.
+
+Choose the additional version info content carefully as not everything is
+supported by PyPi, see the
+[Python Core metadata specifications][ref-py-core-metadata-spec] and
+[PEP440][ref-pep440]
+
+```bash
+changelog2version \
+    --changelog_file changelog.md \
+    --version_file examples/version.py \
+    --version_file_type py \
+    --additional_version_info="rc1234" \
+    --debug
+```
+
+```
+#!/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+__version_info__ = ("0", "5", "0")
+__version__ = '.'.join(__version_info__) + '-rc1234'
+
+```
+
 ## Credits
 
 Based on the [PyPa sample project][ref-pypa-sample]. Also a big thank you to
@@ -182,6 +211,8 @@ documentation and [regex example][ref-semver-regex-example]
 <!-- Links -->
 [ref-package-version-file]: src/changelog2version/version.py
 [ref-templates-folder]: src/changelog2version/templates
+[ref-py-core-metadata-spec]: https://packaging.python.org/specifications/core-metadat
+[ref-pep440]: https://peps.python.org/pep-0440/
 [ref-pypa-sample]: https://github.com/pypa/sampleproject
 [ref-semver]: https://semver.org/
 [ref-semver-regex-example]: https://regex101.com/r/Ly7O1x/3/

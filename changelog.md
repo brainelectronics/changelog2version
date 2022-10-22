@@ -17,6 +17,16 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 -->
 
 ## Released
+## [0.5.0] - 2022-10-20
+### Added
+- Support additional version info file content in python version files by
+  adding the content given by `--additional_version_info="-rc1234"` to the
+  end of the constructed `__version__` content.
+  This will create the following line in a `version.py` file:
+  `__version__ = '.'.join(__version_info__) + '-rc1234'`
+  A created package will thereby be named `0.5.0rc1234` if the version is
+  `0.5.0`, resolve [#14][ref-issue-14]
+
 ## [0.4.0] - 2022-08-07
 ### Added
 - Property `semver_data` to access extracted VersionInfo from parsed semver
@@ -118,8 +128,9 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Data folder after fork
 
 <!-- Links -->
-[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.4.0...develop
+[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.5.0...develop
 
+[0.5.0]: https://github.com/brainelectronics/changelog2version/tree/0.5.0
 [0.4.0]: https://github.com/brainelectronics/changelog2version/tree/0.4.0
 [0.3.0]: https://github.com/brainelectronics/changelog2version/tree/0.3.0
 [0.2.0]: https://github.com/brainelectronics/changelog2version/tree/0.2.0
@@ -130,6 +141,7 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 [ref-issue-8]: https://github.com/brainelectronics/changelog2version/issues/8
 [ref-issue-11]: https://github.com/brainelectronics/changelog2version/issues/11
 [ref-issue-4]: https://github.com/brainelectronics/changelog2version/issues/4
+[ref-issue-14]: https://github.com/brainelectronics/changelog2version/issues/14
 
 [ref-codecov-changelog2version]: https://app.codecov.io/github/brainelectronics/changelog2version
 [ref-python-gitignore-template]: https://github.com/github/gitignore/blob/e5323759e387ba347a9d50f8b0ddd16502eb71d4/Python.gitignore
