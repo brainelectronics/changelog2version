@@ -61,6 +61,13 @@ class ExtractVersion(object):
             r"(?P<timestamp>\d{2,}:\d{2,}:\d{2,}?))?"   # time as HH:MM:SS
         )
 
+        self._date_line_regex = (
+            r".*"    # anything
+            r"(?P<datetime>\d{4}\-\d{2}-\d{2})"     # datetime as YYYY-MM-DD
+            r"(([T ]{1})"   # seperation between date and time by "T" or space
+            r"(?P<timestamp>\d{2,}:\d{2,}:\d{2,}?))?"   # time as HH:MM:SS
+        )
+
     @property
     def version_line_regex(self) -> str:
         """
@@ -106,6 +113,30 @@ class ExtractVersion(object):
         try:
             re.compile(value)
             self._semver_line_regex = value
+        except re.error:
+            raise ExtractVersionError("Invalid regex pattern")
+
+    @property
+    def date_line_regex(self) -> str:
+        """
+        Get regex to extract the date part from the complete version line
+
+        :returns:   Regex to get the date part
+        :rtype:     str
+        """
+        return self._date_line_regex
+
+    @date_line_regex.setter
+    def date_line_regex(self, value: str) -> None:
+        """
+        Set regex to extract the date part from the complete version line
+
+        :param      value:  Regex to get the date part
+        :type       value:  str
+        """
+        try:
+            re.compile(value)
+            self._date_line_regex = value
         except re.error:
             raise ExtractVersionError("Invalid regex pattern")
 
