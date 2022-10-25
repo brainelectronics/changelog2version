@@ -202,8 +202,6 @@ def main():
         changelog_file=changelog_file)
     version_lines = version_extractor.parse_changelog_completely(
         changelog_file=changelog_file)
-    semver_string = version_extractor.parse_semver_line(
-        release_version_line=version_line)
 
     release_infos = {}
     for line in version_lines:
@@ -212,6 +210,9 @@ def main():
         this_date_string = version_extractor.parse_semver_line_date(
             release_version_line=line)
         release_infos[this_semver_string] = [{"upload_time": this_date_string}]
+
+    semver_string = version_extractor.parse_semver_line(
+        release_version_line=version_line)
 
     file_renderer = RenderVersionFile()
     semver_data = version_extractor.semver_data
