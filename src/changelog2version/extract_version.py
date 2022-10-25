@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 from semver import VersionInfo
 from sys import stdout
-from typing import Optional
+from typing import List, Optional
 
 
 class ExtractVersionError(Exception):
@@ -204,17 +204,43 @@ class ExtractVersion(object):
         """
         release_version_line = ""
 
+        release_version_lines = self.parse_changelog_completely(
+            changelog_file=changelog_file,
+            first_line_only=True)
+
+        if len(release_version_lines) >= 1:
+            release_version_line = release_version_lines[0]
+
+        return release_version_line
+
+    def parse_changelog_completely(self,
+                                   changelog_file: Path,
+                                   first_line_only: bool = False) -> List[str]:
+        """
+        Parse the changelog for all matching version lines
+
+        :param      changelog_file:  The path to the changelog file
+        :type       changelog_file:  Path
+        :param      first_line_only: Flag to break after first match found
+        :type       first_line_only: bool
+
+        :returns:   List of extracted semantic version strings
+        :rtype:     List[str]
+        """
+        release_version_lines = []
+
         with open(changelog_file, "r") as f:
             for line in f:
                 match = re.search(self.version_line_regex, line)
                 if match:
-                    release_version_line = match.group()
-                    break
+                    release_version_lines.append(match.group())
+                    if first_line_only:
+                        break
 
-        self._logger.debug("First matching release version line: '{}'".
-                           format(release_version_line))
+        self._logger.debug("Matching release version lines: '{}'".
+                           format(release_version_lines))
 
-        return release_version_line
+        return release_version_lines
 
     def parse_semver_line(self, release_version_line: str) -> str:
         """
