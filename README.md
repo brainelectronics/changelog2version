@@ -21,6 +21,9 @@ Create version info files based on the latest changelog entry.
     - [Available default template files](#available-default-template-files)
         - [C header file](#c-header-file)
         - [Python package file](#python-package-file)
+        - [JSON output](#json-output)
+            - [Console](#console)
+            - [File](#file)
 - [Advanced](#advanced)
     - [Custom regular expressions](#custom-regular-expressions)
     - [Custom template file](#custom-template-file)
@@ -104,6 +107,36 @@ __version_info__ = ("0", "4", "0")
 __version__ = '.'.join(__version_info__)
 
 ```
+
+#### JSON output
+
+The additional, optional argument `--pretty` will output the JSON data with an
+indentation of 4 in order to provide the data in an easy to read format.
+
+##### Console
+
+```bash
+changelog2version \
+    --changelog_file changelog.md \
+    --print \
+    --debug
+```
+
+```json
+{"info": {"version": "0.6.0"}, "releases": {"0.6.0": [{"upload_time": "2022-10-26"}], "0.5.0": [{"upload_time": "2022-10-20"}], "0.4.0": [{"upload_time": "2022-08-07"}], "0.3.0": [{"upload_time": "2022-08-05"}], "0.2.0": [{"upload_time": "2022-08-03"}], "0.1.1": [{"upload_time": "2022-07-31"}], "0.1.0": [{"upload_time": "2022-07-31"}]}}
+```
+
+##### File
+
+```bash
+changelog2version \
+    --changelog_file changelog.md \
+    --output changelog.json \
+    --pretty \
+    --debug
+```
+
+See [example JSON file][ref-example-json-file]
 
 ## Advanced
 
@@ -211,6 +244,7 @@ documentation and [regex example][ref-semver-regex-example]
 <!-- Links -->
 [ref-package-version-file]: src/changelog2version/version.py
 [ref-templates-folder]: src/changelog2version/templates
+[ref-example-json-file]: examples/changelog.json
 [ref-py-core-metadata-spec]: https://packaging.python.org/specifications/core-metadat
 [ref-pep440]: https://peps.python.org/pep-0440/
 [ref-pypa-sample]: https://github.com/pypa/sampleproject
