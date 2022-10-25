@@ -242,6 +242,32 @@ class ExtractVersion(object):
 
         return release_version_lines
 
+    def parse_semver_line_date(self, release_version_line: str) -> str:
+        """
+        Parse a version line for a valid ISO8601 datetime
+
+        Examples of a valid ISO8601 datetime lines:
+        - "## [0.2.0] - 2022-05-19"
+        - "## [107.3.18] - 1900-01-01 12:34:56"
+        - "## [1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay] - 2012-01-02"    # noqa
+
+        :param      release_version_line:  The release version line
+        :type       release_version_line:  str
+
+        :returns:   ISO8601 datetime string, e.g. "1970-01-01"
+        :rtype:     str
+        """
+        date_string = "1970-01-01"
+
+        match = re.search(self.date_line_regex, release_version_line)
+        if match:
+            if len(match.groups()) >= 4 and match.group(2):
+                date_string = match.group(1) + match.group(2)
+            else:
+                date_string = match.group(1)
+
+        return date_string
+
     def parse_semver_line(self, release_version_line: str) -> str:
         """
         Parse a version line for a semantic version
