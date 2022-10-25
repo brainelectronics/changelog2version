@@ -28,6 +28,8 @@ Create version info files based on the latest changelog entry.
     - [Custom regular expressions](#custom-regular-expressions)
     - [Custom template file](#custom-template-file)
     - [Additional version info content](#additional-version-info-content)
+- [Contributing](#contributing)
+    - [Unittests](#unittests)
 - [Credits](#credits)
 
 <!-- /MarkdownTOC -->
@@ -234,6 +236,33 @@ __version_info__ = ("0", "5", "0")
 __version__ = '.'.join(__version_info__) + '-rc1234'
 
 ```
+
+## Contributing
+
+### Unittests
+
+Run the unittests locally with the following command after installing this
+package in a virtual environment or by using `tox` to create one on each run.
+
+```bash
+# install the package with all its development dependencies
+pip install .[dev]
+
+# run all tests
+nose2 --config tests/unittest.cfg
+
+# run only one specific tests
+nose2 tests.test_extract_version.TestExtractVersion.test_version_line_regex
+```
+
+Generate the coverage files with
+
+```bash
+python create_report_dirs.py
+coverage html
+```
+
+The coverage report is placed at `reports/coverage/html/index.html`
 
 ## Credits
 
