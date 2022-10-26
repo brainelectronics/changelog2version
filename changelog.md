@@ -17,6 +17,17 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 -->
 
 ## Released
+## [0.6.0] - 2022-10-26
+### Added
+- Changelog can be parsed as JSON file with a similar format as the pypi
+  package JSON info available at `https://pypi.org/pypi/PACKAGENAME/json`, see
+  [#16][ref-issue-16]
+  The new option `--output` writes the data in JSON valid format to a file specified file, `--print` flag sends the data in JSON valid format to
+  `sys.stdout`. In both cases `--pretty` flag can be set to output the data with an indentation of 4.
+
+### Changed
+- `--version_file` argument is optional in order to allow a JSON output only
+
 ## [0.5.0] - 2022-10-20
 ### Added
 - Support additional version info file content in python version files by
@@ -128,8 +139,9 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Data folder after fork
 
 <!-- Links -->
-[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.5.0...develop
+[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.6.0...develop
 
+[0.6.0]: https://github.com/brainelectronics/changelog2version/tree/0.6.0
 [0.5.0]: https://github.com/brainelectronics/changelog2version/tree/0.5.0
 [0.4.0]: https://github.com/brainelectronics/changelog2version/tree/0.4.0
 [0.3.0]: https://github.com/brainelectronics/changelog2version/tree/0.3.0
@@ -137,6 +149,7 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 [0.1.1]: https://github.com/brainelectronics/changelog2version/tree/0.1.1
 [0.1.0]: https://github.com/brainelectronics/changelog2version/tree/0.1.0
 
+[ref-issue-16]: https://github.com/brainelectronics/changelog2version/issues/16
 [ref-issue-5]: https://github.com/brainelectronics/changelog2version/issues/5
 [ref-issue-8]: https://github.com/brainelectronics/changelog2version/issues/8
 [ref-issue-11]: https://github.com/brainelectronics/changelog2version/issues/11
