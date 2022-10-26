@@ -91,7 +91,7 @@ def parse_arguments() -> argparse.Namespace:
 
     parser.add_argument('--version_file',
                         dest='version_file',
-                        required=True,
+                        required=False,
                         help='Path to rendered file')
 
     parser.add_argument('--version_file_type',
@@ -134,6 +134,22 @@ def parse_arguments() -> argparse.Namespace:
                         help='Regex to extract semver part of from a version '
                              'line')
 
+    parser.add_argument('--output',
+                        dest='dump_to_file',
+                        required=False,
+                        help='Dump parsed changelog as JSON file to file')
+
+    parser.add_argument('--print',
+                        dest='print_result',
+                        required=False,
+                        action='store_true',
+                        help='Print parsed changelog as JSON to stdout')
+
+    parser.add_argument('--pretty',
+                        dest='pretty_output',
+                        action='store_true',
+                        help='Print JSON data at stdout in readable format')
+
     parsed_args = parser.parse_args()
 
     return parsed_args
@@ -154,16 +170,21 @@ def main():
 
     # changelog_file = Path(args.changelog_file).resolve()
     changelog_file = args.changelog_file
-    version_file = Path(args.version_file).resolve()
+    version_file = None
     template_file = args.template_file
     version_file_type = args.version_file_type
     additional_template_data = args.additional_template_data
     additional_version_info = args.additional_version_info
     version_line_regex = args.version_line_regex
     semver_line_regex = args.semver_line_regex
+    dump_to_file = args.dump_to_file
+    print_result = args.print_result
+    pretty_output = args.pretty_output
 
-    logger.debug("Using changelog file '{}' to update version file '{}'".
-                 format(changelog_file, version_file))
+    if args.version_file:
+        version_file = Path(args.version_file).resolve()
+        logger.debug("Using changelog file '{}' to update version file '{}'".
+                     format(changelog_file, version_file))
 
     version_extractor = ExtractVersion(logger=logger)
 
@@ -177,8 +198,21 @@ def main():
                      "changelog file: {}".format(version_line_regex))
         version_extractor.version_line_regex = version_line_regex
 
-    version_line = version_extractor.parse_changelog(changelog_file)
-    semver_string = version_extractor.parse_semver_line(version_line)
+    version_line = version_extractor.parse_changelog(
+        changelog_file=changelog_file)
+    version_lines = version_extractor.parse_changelog_completely(
+        changelog_file=changelog_file)
+
+    release_infos = {}
+    for line in version_lines:
+        this_semver_string = version_extractor.parse_semver_line(
+            release_version_line=line)
+        this_date_string = version_extractor.parse_semver_line_date(
+            release_version_line=line)
+        release_infos[this_semver_string] = [{"upload_time": this_date_string}]
+
+    semver_string = version_extractor.parse_semver_line(
+        release_version_line=version_line)
 
     file_renderer = RenderVersionFile()
     semver_data = version_extractor.semver_data
@@ -212,10 +246,29 @@ def main():
                            "a template from this list: {}".
                            format(template_file_map.keys()))
 
-    rendered_content = file_renderer.render_file(
-        template=template_file,
-        file_path=version_file,
-        content=version_file_content)
+    if version_file:
+        rendered_content = file_renderer.render_file(
+            template=template_file,
+            file_path=version_file,
+            content=version_file_content)
+
+    changelog_data = {
+        'info': {'version': semver_string},
+        'releases': release_infos
+    }
+
+    if print_result:
+        if pretty_output:
+            stdout.write(json.dumps(changelog_data, indent=4))
+        else:
+            stdout.write(json.dumps(changelog_data))
+
+    if dump_to_file:
+        with open(dump_to_file, 'w') as file:
+            if pretty_output:
+                file.write(json.dumps(changelog_data, indent=4))
+            else:
+                file.write(json.dumps(changelog_data))
 
 
 if __name__ == '__main__':

@@ -17,9 +17,14 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}"
 -->
 
 ## Released
-## [1.2.3] - 2022-07-31
+## [1.3.0] - 2022-10-26
 ### Added
 - Something fixed
 
+## [1.2.3] - 2022-07-31
+### Fixed
+- Something fixed
+
 <!-- Links -->
+[1.3.0]: https://github.com/brainelectronics/changelog2version/tree/1.3.0
 [1.2.3]: https://github.com/brainelectronics/changelog2version/tree/1.2.3

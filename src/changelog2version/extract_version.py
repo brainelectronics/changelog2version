@@ -11,7 +11,7 @@ from pathlib import Path
 import re
 from semver import VersionInfo
 from sys import stdout
-from typing import Optional
+from typing import List, Optional
 
 
 class ExtractVersionError(Exception):
@@ -56,6 +56,13 @@ class ExtractVersion(object):
                                 # for zero or more times
             r")(?=\]))\]"    # positive lookahead for the "]" and the "]"
             r"[ ]{1}\-[ ]{1}"     # exactly one space, "-", exactly one space
+            r"(?P<datetime>\d{4}\-\d{2}-\d{2})"     # datetime as YYYY-MM-DD
+            r"(([T ]{1})"   # seperation between date and time by "T" or space
+            r"(?P<timestamp>\d{2,}:\d{2,}:\d{2,}?))?"   # time as HH:MM:SS
+        )
+
+        self._date_line_regex = (
+            r".*"    # anything
             r"(?P<datetime>\d{4}\-\d{2}-\d{2})"     # datetime as YYYY-MM-DD
             r"(([T ]{1})"   # seperation between date and time by "T" or space
             r"(?P<timestamp>\d{2,}:\d{2,}:\d{2,}?))?"   # time as HH:MM:SS
@@ -106,6 +113,30 @@ class ExtractVersion(object):
         try:
             re.compile(value)
             self._semver_line_regex = value
+        except re.error:
+            raise ExtractVersionError("Invalid regex pattern")
+
+    @property
+    def date_line_regex(self) -> str:
+        """
+        Get regex to extract the date part from the complete version line
+
+        :returns:   Regex to get the date part
+        :rtype:     str
+        """
+        return self._date_line_regex
+
+    @date_line_regex.setter
+    def date_line_regex(self, value: str) -> None:
+        """
+        Set regex to extract the date part from the complete version line
+
+        :param      value:  Regex to get the date part
+        :type       value:  str
+        """
+        try:
+            re.compile(value)
+            self._date_line_regex = value
         except re.error:
             raise ExtractVersionError("Invalid regex pattern")
 
@@ -173,17 +204,69 @@ class ExtractVersion(object):
         """
         release_version_line = ""
 
+        release_version_lines = self.parse_changelog_completely(
+            changelog_file=changelog_file,
+            first_line_only=True)
+
+        if len(release_version_lines) >= 1:
+            release_version_line = release_version_lines[0]
+
+        return release_version_line
+
+    def parse_changelog_completely(self,
+                                   changelog_file: Path,
+                                   first_line_only: bool = False) -> List[str]:
+        """
+        Parse the changelog for all matching version lines
+
+        :param      changelog_file:  The path to the changelog file
+        :type       changelog_file:  Path
+        :param      first_line_only: Flag to break after first match found
+        :type       first_line_only: bool
+
+        :returns:   List of extracted semantic version strings
+        :rtype:     List[str]
+        """
+        release_version_lines = []
+
         with open(changelog_file, "r") as f:
             for line in f:
                 match = re.search(self.version_line_regex, line)
                 if match:
-                    release_version_line = match.group()
-                    break
+                    release_version_lines.append(match.group())
+                    if first_line_only:
+                        break
 
-        self._logger.debug("First matching release version line: '{}'".
-                           format(release_version_line))
+        self._logger.debug("Matching release version lines: '{}'".
+                           format(release_version_lines))
 
-        return release_version_line
+        return release_version_lines
+
+    def parse_semver_line_date(self, release_version_line: str) -> str:
+        """
+        Parse a version line for a valid ISO8601 datetime
+
+        Examples of a valid ISO8601 datetime lines:
+        - "## [0.2.0] - 2022-05-19"
+        - "## [107.3.18] - 1900-01-01 12:34:56"
+        - "## [1.0.0-alpha-a.b-c-somethinglong+build.1-aef.1-its-okay] - 2012-01-02"    # noqa
+
+        :param      release_version_line:  The release version line
+        :type       release_version_line:  str
+
+        :returns:   ISO8601 datetime string, e.g. "1970-01-01"
+        :rtype:     str
+        """
+        date_string = "1970-01-01"
+
+        match = re.search(self.date_line_regex, release_version_line)
+        if match:
+            if len(match.groups()) >= 4 and match.group(2):
+                date_string = match.group(1) + match.group(2)
+            else:
+                date_string = match.group(1)
+
+        return date_string
 
     def parse_semver_line(self, release_version_line: str) -> str:
         """
