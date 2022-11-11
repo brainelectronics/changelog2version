@@ -5,6 +5,7 @@
 import logging
 from nose2.tools import params
 from pathlib import Path
+from semver import VersionInfo
 from sys import stdout
 from typing import List
 import unittest
@@ -69,6 +70,21 @@ class TestExtractVersion(unittest.TestCase):
             self.ev.date_line_regex = "["
 
         self.assertEqual("Invalid regex pattern", str(context.exception))
+
+    def test_semver_data(self) -> None:
+        """Test property semver_data"""
+        self.assertIsInstance(self.ev.semver_data, VersionInfo)
+
+        valid_semver_data = VersionInfo(*(1, 2, 3))
+        self.ev.semver_data = valid_semver_data
+        self.assertIsInstance(self.ev.semver_data, VersionInfo)
+        self.assertEqual(self.ev.semver_data, valid_semver_data)
+
+        with self.assertRaises(ExtractVersionError) as context:
+            self.ev.semver_data = "asdf"
+
+        self.assertEqual("Value is not of type VersionInfo",
+                         str(context.exception))
 
     @unittest.skip("Not yet implemented")
     def test__create_logger(self):
