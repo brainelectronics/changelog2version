@@ -264,9 +264,7 @@ class ExtractVersion(object):
 
                 # collect the lines until the next (second) match is found
                 if matches_found == 1:
-                    stripped_line = line.strip()
-                    if stripped_line:
-                        latest_description_lines.append(stripped_line)
+                    latest_description_lines.append(line.strip())
 
         self._logger.debug("Matching release version lines: '{}'".
                            format(release_version_lines))
