@@ -239,8 +239,8 @@ def main():
 
         if version_file_type in template_file_map:
             template_file = template_file_map[version_file_type]
-            logger.info("Selected '{}' based on version_file_type: '{}'".
-                        format(template_file, version_file_type))
+            logger.debug("Selected '{}' based on version_file_type: '{}'".
+                         format(template_file, version_file_type))
         else:
             raise KeyError("Either specify a custom template file or choose"
                            "a template from this list: {}".
