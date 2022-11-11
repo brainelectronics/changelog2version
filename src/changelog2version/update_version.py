@@ -253,7 +253,10 @@ def main():
             content=version_file_content)
 
     changelog_data = {
-        'info': {'version': semver_string},
+        'info': {
+            'version': semver_string,
+            'description': version_extractor.latest_description,
+        },
         'releases': release_infos
     }
 
