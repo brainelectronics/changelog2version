@@ -17,6 +17,10 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 -->
 
 ## Released
+## [0.8.0] - 2022-11-11
+### Added
+- Create release candidate tag and release on every pull request build. The release description is the latest changelog content, the release title is the latest changelog version. The release is marked as pre-release, see #18
+
 ## [0.7.0] - 2022-11-11
 ### Added
 - Changelog parsed as JSON contains a new key `description` like the PyPi package JSON info, compare to `https://pypi.org/pypi/changelog2version/json`, with the description/content of the latest change, see #19, relates to #18
@@ -149,8 +153,9 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Data folder after fork
 
 <!-- Links -->
-[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.7.0...main
+[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.8.0...main
 
+[0.8.0]: https://github.com/brainelectronics/changelog2version/tree/0.8.0
 [0.7.0]: https://github.com/brainelectronics/changelog2version/tree/0.7.0
 [0.6.0]: https://github.com/brainelectronics/changelog2version/tree/0.6.0
 [0.5.0]: https://github.com/brainelectronics/changelog2version/tree/0.5.0
