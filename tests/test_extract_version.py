@@ -86,10 +86,22 @@ class TestExtractVersion(unittest.TestCase):
         self.assertEqual("Value is not of type VersionInfo",
                          str(context.exception))
 
-    @unittest.skip("Not yet implemented")
     def test__create_logger(self):
         """Test logger creation"""
-        pass
+        logger_name = "Test Logger"
+        named_logger = ExtractVersion._create_logger(logger_name=logger_name)
+
+        self.assertIsInstance(named_logger, logging.Logger)
+        self.assertEqual(named_logger.name, logger_name)
+        self.assertEqual(named_logger.level, logging.DEBUG)
+        self.assertEqual(named_logger.disabled, False)
+
+        logger_without_name = ExtractVersion._create_logger()
+
+        self.assertIsInstance(logger_without_name, logging.Logger)
+        self.assertEqual(logger_without_name.name,
+                         "changelog2version.extract_version")
+        self.assertEqual(logger_without_name.level, logging.DEBUG)
 
     @params(
         ("changelog_with_date.md", "## [1.3.0] - 2022-10-26"),
