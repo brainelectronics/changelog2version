@@ -17,6 +17,16 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 -->
 
 ## Released
+## [0.7.0] - 2022-11-11
+### Added
+- Changelog parsed as JSON contains a new key `description` like the PyPi package JSON info, compare to `https://pypi.org/pypi/changelog2version/json`, with the description/content of the latest change, see #19, relates to #18
+- Increase unittest coverage above 95%
+
+### Changed
+- Line breaks are no longer used in this changelog for enumerations
+- Issues are referenced as `#123` instead of `[#123][ref-issue-123]` to avoid explicit references at the bottom or some other location in the file
+- Output of `changelog2version` call with `--print` but without `--debug` option is JSON compatible
+
 ## [0.6.0] - 2022-10-26
 ### Added
 - Changelog can be parsed as JSON file with a similar format as the pypi
@@ -139,8 +149,9 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Data folder after fork
 
 <!-- Links -->
-[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.6.0...develop
+[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.7.0...main
 
+[0.7.0]: https://github.com/brainelectronics/changelog2version/tree/0.7.0
 [0.6.0]: https://github.com/brainelectronics/changelog2version/tree/0.6.0
 [0.5.0]: https://github.com/brainelectronics/changelog2version/tree/0.5.0
 [0.4.0]: https://github.com/brainelectronics/changelog2version/tree/0.4.0

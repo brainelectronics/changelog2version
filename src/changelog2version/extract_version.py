@@ -32,6 +32,7 @@ class ExtractVersion(object):
             logger = self._create_logger()
         self._logger = logger
         self._semver_data = VersionInfo(*(0, 0, 0))
+        self._latest_description_lines = []
 
         self._semver_line_regex = (
             r"^(?P<major>0|[1-9]\d*)\."     # major version part
@@ -163,6 +164,26 @@ class ExtractVersion(object):
         else:
             raise ExtractVersionError("Value is not of type VersionInfo")
 
+    @property
+    def latest_description_lines(self) -> List[str]:
+        """
+        Get latest description lines of the parsed changelog
+
+        :returns:   Content of latest release
+        :rtype:     List[str]
+        """
+        return self._latest_description_lines
+
+    @property
+    def latest_description(self) -> str:
+        """
+        Get latest description of the parsed changelog
+
+        :returns:   Latest release description
+        :rtype:     str
+        """
+        return '\n'.join(self.latest_description_lines)
+
     @staticmethod
     def _create_logger(logger_name: str = None) -> logging.Logger:
         """
@@ -228,17 +249,30 @@ class ExtractVersion(object):
         :rtype:     List[str]
         """
         release_version_lines = []
+        matches_found = 0
+        latest_description_lines = []
 
         with open(changelog_file, "r") as f:
             for line in f:
                 match = re.search(self.version_line_regex, line)
                 if match:
                     release_version_lines.append(match.group())
+                    matches_found += 1
+
                     if first_line_only:
                         break
 
+                # collect the lines until the next (second) match is found
+                if matches_found == 1:
+                    latest_description_lines.append(line.strip())
+
         self._logger.debug("Matching release version lines: '{}'".
                            format(release_version_lines))
+        self._logger.debug("Latest description lines: '{}'".
+                           format(latest_description_lines[1:]))
+
+        # the version line itself is also included, ignore it
+        self._latest_description_lines = latest_description_lines[1:]
 
         return release_version_lines
 

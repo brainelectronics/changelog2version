@@ -5,6 +5,7 @@
 import logging
 from nose2.tools import params
 from pathlib import Path
+from semver import VersionInfo
 from sys import stdout
 from typing import List
 import unittest
@@ -70,10 +71,37 @@ class TestExtractVersion(unittest.TestCase):
 
         self.assertEqual("Invalid regex pattern", str(context.exception))
 
-    @unittest.skip("Not yet implemented")
+    def test_semver_data(self) -> None:
+        """Test property semver_data"""
+        self.assertIsInstance(self.ev.semver_data, VersionInfo)
+
+        valid_semver_data = VersionInfo(*(1, 2, 3))
+        self.ev.semver_data = valid_semver_data
+        self.assertIsInstance(self.ev.semver_data, VersionInfo)
+        self.assertEqual(self.ev.semver_data, valid_semver_data)
+
+        with self.assertRaises(ExtractVersionError) as context:
+            self.ev.semver_data = "asdf"
+
+        self.assertEqual("Value is not of type VersionInfo",
+                         str(context.exception))
+
     def test__create_logger(self):
         """Test logger creation"""
-        pass
+        logger_name = "Test Logger"
+        named_logger = ExtractVersion._create_logger(logger_name=logger_name)
+
+        self.assertIsInstance(named_logger, logging.Logger)
+        self.assertEqual(named_logger.name, logger_name)
+        self.assertEqual(named_logger.level, logging.DEBUG)
+        self.assertEqual(named_logger.disabled, False)
+
+        logger_without_name = ExtractVersion._create_logger()
+
+        self.assertIsInstance(logger_without_name, logging.Logger)
+        self.assertEqual(logger_without_name.name,
+                         "changelog2version.extract_version")
+        self.assertEqual(logger_without_name.level, logging.DEBUG)
 
     @params(
         ("changelog_with_date.md", "## [1.3.0] - 2022-10-26"),
@@ -97,18 +125,22 @@ class TestExtractVersion(unittest.TestCase):
         (
             "changelog_with_date.md",
             ["## [1.3.0] - 2022-10-26", "## [1.2.3] - 2022-07-31"],
+            "### Added\n- Something fixed\n"
         ),
         (
             "changelog_with_date_and_time.md",
             [
                 "## [94.0.0] - 2022-10-26 23:59:01",
                 "## [93.10.1] - 2022-07-31 12:34:56"
-            ]
+            ],
+            "### Added\n- Something fixed\n"
         ),
     )
     def test_parse_changelog_completely_file(self,
                                              file_name: str,
-                                             expectation: List[str]) -> None:
+                                             expectation: List[str],
+                                             expected_description: str
+                                             ) -> None:
         """Test parse_changelog"""
         changelog = self._here / 'data' / 'valid' / file_name
 
@@ -120,6 +152,13 @@ class TestExtractVersion(unittest.TestCase):
         self.assertEqual(len(result), len(expectation))
         self.assertTrue(all(isinstance(ele, str) for ele in result))
         self.assertEqual(expectation, result)
+
+        # test extracted description
+        self.assertIsInstance(self.ev.latest_description, str)
+        self.assertEqual(self.ev.latest_description, expected_description)
+        self.assertTrue(all(isinstance(ele, str)
+                        for ele in self.ev.latest_description_lines))
+        self.assertEqual(len(self.ev.latest_description_lines), 3)
 
     @params(
         # valid semver release version lines
