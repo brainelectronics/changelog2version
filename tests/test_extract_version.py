@@ -97,18 +97,22 @@ class TestExtractVersion(unittest.TestCase):
         (
             "changelog_with_date.md",
             ["## [1.3.0] - 2022-10-26", "## [1.2.3] - 2022-07-31"],
+            "### Added\n- Something fixed"
         ),
         (
             "changelog_with_date_and_time.md",
             [
                 "## [94.0.0] - 2022-10-26 23:59:01",
                 "## [93.10.1] - 2022-07-31 12:34:56"
-            ]
+            ],
+            "### Added\n- Something fixed"
         ),
     )
     def test_parse_changelog_completely_file(self,
                                              file_name: str,
-                                             expectation: List[str]) -> None:
+                                             expectation: List[str],
+                                             expected_description: str
+                                             ) -> None:
         """Test parse_changelog"""
         changelog = self._here / 'data' / 'valid' / file_name
 
@@ -120,6 +124,13 @@ class TestExtractVersion(unittest.TestCase):
         self.assertEqual(len(result), len(expectation))
         self.assertTrue(all(isinstance(ele, str) for ele in result))
         self.assertEqual(expectation, result)
+
+        # test extracted description
+        self.assertIsInstance(self.ev.latest_description, str)
+        self.assertEqual(self.ev.latest_description, expected_description)
+        self.assertTrue(all(isinstance(ele, str)
+                        for ele in self.ev.latest_description_lines))
+        self.assertEqual(len(self.ev.latest_description_lines), 2)
 
     @params(
         # valid semver release version lines
