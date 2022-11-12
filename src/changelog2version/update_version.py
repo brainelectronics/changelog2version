@@ -30,6 +30,7 @@ from sys import stdout
 
 from .extract_version import ExtractVersion
 from .render_version_file import RenderVersionFile
+from .version import __version__
 
 
 def parser_valid_file(parser: argparse.ArgumentParser, arg: str) -> Path:
@@ -81,6 +82,16 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument('-d', '--debug',
                         action='store_true',
                         help='Output logger messages to stderr')
+    parser.add_argument('-v',
+                        default=0,
+                        action='count',
+                        dest='verbosity',
+                        help='Set level of verbosity, default is CRITICAL')
+    parser.add_argument('--version',
+                        action='version',
+                        version='%(prog)s {version}'.
+                                format(version=__version__),
+                        help="Print version of package and exit")
 
     # specific arguments
     parser.add_argument('--changelog_file',
@@ -159,14 +170,22 @@ def main():
     # parse CLI arguments
     args = parse_arguments()
 
+    log_levels = {
+        0: logging.CRITICAL,
+        1: logging.ERROR,
+        2: logging.WARNING,
+        3: logging.INFO,
+        4: logging.DEBUG,
+    }
     custom_format = '[%(asctime)s] [%(levelname)-8s] [%(filename)-15s @'\
                     ' %(funcName)-15s:%(lineno)4s] %(message)s'
     logging.basicConfig(level=logging.INFO,
                         format=custom_format,
                         stream=stdout)
     logger = logging.getLogger(__name__)
-    if args.debug:
-        logger.setLevel(logging.DEBUG)
+    logger.setLevel(level=log_levels[min(args.verbosity,
+                                     max(log_levels.keys()))])
+    logger.disabled = not args.debug
 
     # changelog_file = Path(args.changelog_file).resolve()
     changelog_file = args.changelog_file
