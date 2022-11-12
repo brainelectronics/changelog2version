@@ -30,6 +30,7 @@ from sys import stdout
 
 from .extract_version import ExtractVersion
 from .render_version_file import RenderVersionFile
+from .version import __version__
 
 
 def parser_valid_file(parser: argparse.ArgumentParser, arg: str) -> Path:
@@ -86,6 +87,11 @@ def parse_arguments() -> argparse.Namespace:
                         action='count',
                         dest='verbosity',
                         help='Set level of verbosity, default is CRITICAL')
+    parser.add_argument('--version',
+                        action='version',
+                        version='%(prog)s {version}'.
+                                format(version=__version__),
+                        help="Print version of package and exit")
 
     # specific arguments
     parser.add_argument('--changelog_file',
