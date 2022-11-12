@@ -17,6 +17,12 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 -->
 
 ## Released
+## [0.9.0] - 2022-11-12
+### Added
+- Version of `changelog2version` can be requested with `--version` argument, see #22
+- Verbosity of internal logger can be set with `-vvvv` as `DEBUG`, default level is `CRITICAL`, see #22
+- Usage example in README for description and version extraction from JSON in console, introduced in 0.7.0, see #20
+
 ## [0.8.0] - 2022-11-11
 ### Added
 - Create release candidate tag and release on every pull request build. The release description is the latest changelog content, the release title is the latest changelog version. The release is marked as pre-release, see #18
@@ -153,8 +159,9 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Data folder after fork
 
 <!-- Links -->
-[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.8.0...main
+[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.9.0...main
 
+[0.9.0]: https://github.com/brainelectronics/changelog2version/tree/0.9.0
 [0.8.0]: https://github.com/brainelectronics/changelog2version/tree/0.8.0
 [0.7.0]: https://github.com/brainelectronics/changelog2version/tree/0.7.0
 [0.6.0]: https://github.com/brainelectronics/changelog2version/tree/0.6.0
