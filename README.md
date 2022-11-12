@@ -125,7 +125,31 @@ changelog2version \
 ```
 
 ```json
-{"info": {"version": "0.6.0"}, "releases": {"0.6.0": [{"upload_time": "2022-10-26"}], "0.5.0": [{"upload_time": "2022-10-20"}], "0.4.0": [{"upload_time": "2022-08-07"}], "0.3.0": [{"upload_time": "2022-08-05"}], "0.2.0": [{"upload_time": "2022-08-03"}], "0.1.1": [{"upload_time": "2022-07-31"}], "0.1.0": [{"upload_time": "2022-07-31"}]}}
+{"info": {"version": "0.7.0", "description": "### Added\n- Changelog parsed as JSON contains a new key `description` like the PyPi package JSON info, compare to `https://pypi.org/pypi/changelog2version/json`, with the description/content of the latest change, see #19, relates to #18\n- Increase unittest coverage above 95%\n\n### Changed\n- Line breaks are no longer used in this changelog for enumerations\n- Issues are referenced as `#123` instead of `[#123][ref-issue-123]` to avoid explicit references at the bottom or some other location in the file\n- Output of `changelog2version` call with `--print` but without `--debug` option is JSON compatible\n"}, "releases": {"0.7.0": [{"upload_time": "2022-11-11"}], "0.6.0": [{"upload_time": "2022-10-26"}], "0.5.0": [{"upload_time": "2022-10-20"}], "0.4.0": [{"upload_time": "2022-08-07"}], "0.3.0": [{"upload_time": "2022-08-05"}], "0.2.0": [{"upload_time": "2022-08-03"}], "0.1.1": [{"upload_time": "2022-07-31"}], "0.1.0": [{"upload_time": "2022-07-31"}]}}
+```
+
+To get the latest version and description in the console as environment
+variables use the following call
+
+```bash
+LATEST_VERSION=$(changelog2version --changelog_file changelog.md --print | python -c "import sys, json; print(json.load(sys.stdin)['info']['version'])")
+LATEST_CHANGE=$(changelog2version --changelog_file changelog.md --print | python -c "import sys, json; print(json.load(sys.stdin)['info']['description'])")
+
+echo "The latest version extracted from the changelog is ${LATEST_VERSION}"
+# The latest version extracted from the changelog is 0.7.0
+
+echo "Description of the latest change"
+echo "${LATEST_CHANGE}"
+# ### Added
+# - Changelog parsed as JSON contains a new key `description` like the PyPi package JSON info, compare to `https://pyp
+# i.org/pypi/changelog2version/json`, with the description/content of the latest change, see #19, relates to #18
+# - Increase unittest coverage above 95%
+
+# ### Changed
+# - Line breaks are no longer used in this changelog for enumerations
+# - Issues are referenced as `#123` instead of `[#123][ref-issue-123]` to avoid explicit references at the bottom or s
+# ome other location in the file
+# - Output of `changelog2version` call with `--print` but without `--debug` option is JSON compatible
 ```
 
 ##### File
