@@ -1,0 +1,9 @@
+---
+
+- id: changelog2version
+  name: changelog2version
+  description: Validate version file against latest changelog entry
+  entry: changelog2version
+  language: python
+  pass_filenames: false
+  require_serial: true

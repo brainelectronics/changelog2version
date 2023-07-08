@@ -24,6 +24,7 @@ Create version info files based on the latest changelog entry.
         - [JSON output](#json-output)
             - [Console](#console)
             - [File](#file)
+    - [Validate generated file](#validate-generated-file)
 - [Advanced](#advanced)
     - [Custom regular expressions](#custom-regular-expressions)
     - [Custom template file](#custom-template-file)
@@ -163,6 +164,35 @@ changelog2version \
 ```
 
 See [example JSON file][ref-example-json-file]
+
+### Validate generated file
+
+To validate an already generated version file agains the latest available
+changelog the `--validate` option can be used.
+
+The following command will exit with a non-zero code in case of a difference
+between the generated version file (`examples/version.py`) and the latest
+changelog content.
+
+```bash
+changelog2version \
+    --changelog_file changelog.md \
+    --version_file examples/version.py \
+    --validate \
+    --debug
+```
+
+By default a Python version file is assumed, for a C header version file the
+call has to be extended with the `version_file_type` option
+
+```bash
+changelog2version \
+    --changelog_file changelog.md \
+    --version_file examples/version_info.h \
+    --version_file_type c \
+    --validate \
+    --debug
+```
 
 ## Advanced
 
