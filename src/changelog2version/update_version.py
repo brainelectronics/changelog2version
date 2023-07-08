@@ -21,6 +21,7 @@ The semantic version tag inside the square brackets supports the full scope.
 
 import argparse
 import fileinput
+from hashlib import sha1
 import json
 import logging
 from pathlib import Path
@@ -150,6 +151,12 @@ def parse_arguments() -> argparse.Namespace:
                         required=False,
                         help='Dump parsed changelog as JSON file to file')
 
+    parser.add_argument('--validate',
+                        dest='do_validate',
+                        required=False,
+                        action='store_true',
+                        help='Validate existing version file with changelog based version')  # noqa: E501
+
     parser.add_argument('--print',
                         dest='print_result',
                         required=False,
@@ -197,6 +204,7 @@ def main():
     version_line_regex = args.version_line_regex
     semver_line_regex = args.semver_line_regex
     dump_to_file = args.dump_to_file
+    do_validate = args.do_validate
     print_result = args.print_result
     pretty_output = args.pretty_output
 
@@ -265,11 +273,28 @@ def main():
                            "a template from this list: {}".
                            format(template_file_map.keys()))
 
-    if version_file:
-        rendered_content = file_renderer.render_file(
+    if do_validate:
+        file_renderer.render_file(
             template=template_file,
             file_path=version_file,
-            content=version_file_content)
+            content=version_file_content,
+            save_file=False
+        )
+
+        file_sha1 = sha1(version_file.read_bytes()).hexdigest()
+        rendered_sha1 = sha1(file_renderer.content.encode()).hexdigest()
+
+        if file_sha1 != rendered_sha1:
+            raise SystemExit(
+                'Mismatch between version file and latest changelog version'
+            )
+
+    if version_file and not do_validate:
+        file_renderer.render_file(
+            template=template_file,
+            file_path=version_file,
+            content=version_file_content
+        )
 
     changelog_data = {
         'info': {

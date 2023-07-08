@@ -35,6 +35,7 @@ class RenderVersionFile(object):
 
         self._env = None
         self._default_template_path = Path(__file__).parent / "templates"
+        self._content = ""
 
     @property
     def default_template_path(self) -> Path:
@@ -64,6 +65,16 @@ class RenderVersionFile(object):
         else:
             raise RenderVersionFileError(
                 "Specified directory '{}' doesn't exist".format(template_path))
+
+    @property
+    def content(self) -> str:
+        """
+        Get rendered version file content
+
+        :returns:   Rendered version file content
+        :rtype:     str
+        """
+        return self._content
 
     def _find_file(self, template: Union[Path, str]) -> Path:
         """
@@ -116,7 +127,8 @@ class RenderVersionFile(object):
     def render_file(self,
                     file_path: Path,
                     content: dict,
-                    template: Union[Path, str]) -> None:
+                    template: Union[Path, str],
+                    save_file: bool = True) -> None:
         """
         Render a template file with given content
 
@@ -126,6 +138,8 @@ class RenderVersionFile(object):
         :type       content:    dict
         :param      template:   The path to the template file
         :type       template:   Union[Path, str]
+        :param      save_file:  Save rendered content to file
+        :type       save_file:  bool
         """
         template_file = self._find_file(template=template)
 
@@ -136,6 +150,10 @@ class RenderVersionFile(object):
 
         file_template = self._env.get_template(template_file.name)
         rendered_content = file_template.render(content)
+        self._content = rendered_content
+
+        if not save_file:
+            return
 
         Path(file_path.parent).mkdir(parents=True, exist_ok=True)
 
