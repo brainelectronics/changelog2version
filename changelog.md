@@ -17,6 +17,10 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 -->
 
 ## Released
+## [0.10.0] - 2024-10-02
+### Fixed
+- add support for `Python 3.11`
+
 ## [0.10.0] - 2023-07-08
 ### Added
 - `--validate` argument can be used to validate an existing version file against the latest changelog entry
@@ -166,8 +170,9 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - Data folder after fork
 
 <!-- Links -->
-[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.10.0...main
+[Unreleased]: https://github.com/brainelectronics/changelog2version/compare/0.11.0...main
 
+[0.11.0]: https://github.com/brainelectronics/changelog2version/tree/0.11.0
 [0.10.0]: https://github.com/brainelectronics/changelog2version/tree/0.10.0
 [0.9.0]: https://github.com/brainelectronics/changelog2version/tree/0.9.0
 [0.8.0]: https://github.com/brainelectronics/changelog2version/tree/0.8.0
