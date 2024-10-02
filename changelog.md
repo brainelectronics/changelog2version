@@ -22,6 +22,7 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 - add support for `Python 3.11`
 - update `twine` version to `5.1.1` or newer to fix KeyError issue
 - drop release testing with `Python 3.7`
+- yaml syntax is correct for all workflow files
 
 ## [0.10.0] - 2023-07-08
 ### Added
