@@ -1,3 +1,4 @@
+---
 # this file is *not* meant to cover or endorse the use of GitHub Actions, but rather to
 # help make automated releases for this project
 
@@ -12,61 +13,61 @@ jobs:
   test-deploy:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v2
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: '3.9'
-    - name: Install deploy dependencies
-      run: |
-        python -m pip install -U setuptools wheel build
-        if [ -f requirements-deploy.txt ]; then pip install -r requirements-deploy.txt; fi
-        pip install .
-    - name: Parse changelog
-      id: parse_changelog
-      run: |
-        changelog2version --changelog_file changelog.md --print | python -c "import sys, json; print(json.load(sys.stdin)['info']['description'])" > latest_description.txt
-        echo 'LATEST_DESCRIPTION<<"EOT"' >> $GITHUB_OUTPUT
-        cat latest_description.txt >> $GITHUB_OUTPUT
-        echo '"EOT"' >> $GITHUB_OUTPUT
-        latest_version=$(changelog2version --changelog_file changelog.md --print | python -c "import sys, json; print(json.load(sys.stdin)['info']['version'])")
-        echo "latest_version=$latest_version" >> $GITHUB_ENV
-    - name: Build package
-      run: |
-        changelog2version \
-          --changelog_file changelog.md \
-          --version_file src/changelog2version/version.py \
-          --version_file_type py \
-          --additional_version_info="-rc${{ github.run_number }}.dev${{ github.event.number }}" \
-          --debug
-        python -m build .
-    - name: Test built package
-      run: |
-        twine check dist/*.tar.gz
-    - name: Archive build package artifact
-      uses: actions/upload-artifact@v3
-      with:
-        # https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
-        # ${{ github.repository }} and ${{ github.ref_name }} can't be used for artifact name due to unallowed '/'
-        name: dist_py.${{ github.event.repository.name }}_sha.${{ github.sha }}_build.${{ github.run_number }}
-        path: dist/*.tar.gz
-        retention-days: 14
-    - name: Publish package
-      uses: pypa/gh-action-pypi-publish@release/v1.5
-      with:
-        repository_url: https://test.pypi.org/legacy/
-        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
-        skip_existing: true
-        verbose: true
-        print_hash: true
-    - name: Create Prerelease
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: ${{ env.latest_version }}-rc${{ github.run_number }}.dev${{ github.event.number }}
-        release_name: ${{ env.latest_version }}-rc${{ github.run_number }}.dev${{ github.event.number }}
-        body: ${{ steps.parse_changelog.outputs.LATEST_DESCRIPTION }}
-        draft: false
-        prerelease: true
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+      - name: Install deploy dependencies
+        run: |
+          python -m pip install -U setuptools wheel build
+          if [ -f requirements-deploy.txt ]; then pip install -r requirements-deploy.txt; fi
+          pip install .
+      - name: Parse changelog
+        id: parse_changelog
+        run: |
+          changelog2version --changelog_file changelog.md --print | python -c "import sys, json; print(json.load(sys.stdin)['info']['description'])" > latest_description.txt
+          echo 'LATEST_DESCRIPTION<<"EOT"' >> $GITHUB_OUTPUT
+          cat latest_description.txt >> $GITHUB_OUTPUT
+          echo '"EOT"' >> $GITHUB_OUTPUT
+          latest_version=$(changelog2version --changelog_file changelog.md --print | python -c "import sys, json; print(json.load(sys.stdin)['info']['version'])")
+          echo "latest_version=$latest_version" >> $GITHUB_ENV
+      - name: Build package
+        run: |
+          changelog2version \
+            --changelog_file changelog.md \
+            --version_file src/changelog2version/version.py \
+            --version_file_type py \
+            --additional_version_info="-rc${{ github.run_number }}.dev${{ github.event.number }}" \
+            --debug
+          python -m build .
+      - name: Test built package
+        run: |
+          twine check dist/*.tar.gz
+      - name: Archive build package artifact
+        uses: actions/upload-artifact@v3
+        with:
+          # https://docs.github.com/en/actions/learn-github-actions/contexts#github-context
+          # ${{ github.repository }} and ${{ github.ref_name }} can't be used for artifact name due to unallowed '/'
+          name: dist_py.${{ github.event.repository.name }}_sha.${{ github.sha }}_build.${{ github.run_number }}
+          path: dist/*.tar.gz
+          retention-days: 14
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@release/v1.5
+        with:
+          repository_url: https://test.pypi.org/legacy/
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          skip_existing: true
+          verbose: true
+          print_hash: true
+      - name: Create Prerelease
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ env.latest_version }}-rc${{ github.run_number }}.dev${{ github.event.number }}
+          release_name: ${{ env.latest_version }}-rc${{ github.run_number }}.dev${{ github.event.number }}
+          body: ${{ steps.parse_changelog.outputs.LATEST_DESCRIPTION }}
+          draft: false
+          prerelease: true
