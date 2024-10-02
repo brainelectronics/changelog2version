@@ -20,6 +20,7 @@ r"^\#\# \[\d{1,}[.]\d{1,}[.]\d{1,}\] \- \d{4}\-\d{2}-\d{2}$"
 ## [0.10.0] - 2024-10-02
 ### Fixed
 - add support for `Python 3.11`
+- update `twine` version to `5.1.1` or newer to fix KeyError issue
 
 ## [0.10.0] - 2023-07-08
 ### Added
