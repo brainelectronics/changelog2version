@@ -368,6 +368,6 @@ class ExtractVersion(object):
             match = re.search(r"(<!--\smeta\s=\s)(.*?)(\s-->)", line)
 
             if match and len(match.groups()) == 3:
-                self._meta_data = json.loads(match.groups()[1].replace("'", "\""))
+                self._meta_data = json.loads(match.groups()[1].replace("'", "\""))  # noqa: E501
                 self._logger.debug("Meta Data: '{}'".format(self._meta_data))
                 break
