@@ -3,6 +3,7 @@ examples/*.c
 examples/*.h
 examples/*.py
 examples/version_info
+changelog.json
 
 # custom, package specific ignores
 .DS_Store
