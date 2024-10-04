@@ -301,6 +301,7 @@ def main():
         'info': {
             'version': semver_string,
             'description': version_extractor.latest_description,
+            'meta': version_extractor.meta_data,
         },
         'releases': release_infos
     }

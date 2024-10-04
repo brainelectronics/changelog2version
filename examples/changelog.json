@@ -1,8 +1,53 @@
 {
     "info": {
-        "version": "0.6.0"
+        "version": "0.12.0",
+        "description": "<!-- meta = {'type': 'feature', 'scope': ['all'], 'affected': ['all']} -->\n\nAdd parser for meta data comment in changelog entry. The parsed data is available via the `meta_data` property of `ExtractVersion` after running `parse_changelog_completely` and is added to the `changelog.json` file. See #28\n\n- bump `snippets2changelog` to 1.3.0 to have the snippets meta data added to the changelog entries\n\n[0.12.0]: https://github.com/brainelectronics/snippets2changelog/tree/0.12.0\n",
+        "meta": {
+            "type": "feature",
+            "scope": [
+                "all"
+            ],
+            "affected": [
+                "all"
+            ]
+        }
     },
     "releases": {
+        "0.12.0": [
+            {
+                "upload_time": "2024-10-04T11:26:10"
+            }
+        ],
+        "0.11.0": [
+            {
+                "upload_time": "2024-10-04T10:53:11"
+            }
+        ],
+        "0.10.1": [
+            {
+                "upload_time": "2024-10-02"
+            }
+        ],
+        "0.10.0": [
+            {
+                "upload_time": "2023-07-08"
+            }
+        ],
+        "0.9.0": [
+            {
+                "upload_time": "2022-11-12"
+            }
+        ],
+        "0.8.0": [
+            {
+                "upload_time": "2022-11-11"
+            }
+        ],
+        "0.7.0": [
+            {
+                "upload_time": "2022-11-11"
+            }
+        ],
         "0.6.0": [
             {
                 "upload_time": "2022-10-26"
