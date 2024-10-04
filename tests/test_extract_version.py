@@ -140,7 +140,7 @@ class TestExtractVersion(unittest.TestCase):
         (
             "changelog_with_meta.md",
             ["## [1.3.0] - 2022-10-26", "## [1.2.3] - 2022-07-31"],
-            "<!-- meta = {'type': 'feature', 'scope': ['all'], 'affected': ['all']} -->\n\n### Added\n- Something fixed\n",
+            "<!-- meta = {'type': 'feature', 'scope': ['all'], 'affected': ['all']} -->\n\n### Added\n- Something fixed\n",  # noqa: E501
             {'type': 'feature', 'scope': ['all'], 'affected': ['all']}
         ),
     )
