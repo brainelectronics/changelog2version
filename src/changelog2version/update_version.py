@@ -21,13 +21,14 @@ The semantic version tag inside the square brackets supports the full scope.
 
 import argparse
 import fileinput
-from hashlib import sha1
 import json
 import logging
-from pathlib import Path
 import re
-import semver
+from hashlib import sha1
+from pathlib import Path
 from sys import stdout
+
+import semver
 
 from .extract_version import ExtractVersion
 from .render_version_file import RenderVersionFile

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Create test report directories."""
-from pathlib import Path
 import os
 import shutil
+from pathlib import Path
 
 if os.path.exists('reports'):
     shutil.rmtree('reports', ignore_errors=True)

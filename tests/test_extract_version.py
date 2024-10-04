@@ -3,16 +3,16 @@
 """Unittest for testing the extract_version file"""
 
 import logging
-from nose2.tools import params
+import unittest
 from pathlib import Path
-from semver import VersionInfo
 from sys import stdout
 from typing import List
-import unittest
-from unittest.mock import patch, mock_open
+from unittest.mock import mock_open, patch
 
-from changelog2version.extract_version import ExtractVersion, \
-    ExtractVersionError
+from changelog2version.extract_version import (ExtractVersion,
+                                               ExtractVersionError)
+from nose2.tools import params
+from semver import VersionInfo
 
 
 class TestExtractVersion(unittest.TestCase):
