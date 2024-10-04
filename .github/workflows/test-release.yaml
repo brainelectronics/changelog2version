@@ -14,9 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+        with:
+          # all history is needed to crawl it properly
+          fetch-depth: 0
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: '3.9'
       - name: Install deploy dependencies
@@ -24,6 +27,12 @@ jobs:
           python -m pip install -U setuptools wheel build
           if [ -f requirements-deploy.txt ]; then pip install -r requirements-deploy.txt; fi
           pip install .
+      - name: Update changelog with snippets
+        run: |
+          changelog-generator \
+            changelog changelog.md \
+            --snippets=.snippets \
+            --in-place
       - name: Parse changelog
         id: parse_changelog
         run: |

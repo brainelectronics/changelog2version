@@ -3,9 +3,9 @@
 """Unittest for testing the update_version file"""
 
 import logging
+import unittest
 from pathlib import Path
 from sys import stdout
-import unittest
 
 
 class TestUpdateVersion(unittest.TestCase):

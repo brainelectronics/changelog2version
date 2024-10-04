@@ -3,10 +3,11 @@
 
 """Render version file based on template"""
 
-from jinja2 import Environment, FileSystemLoader
 import logging
 from pathlib import Path
 from typing import Optional, Union
+
+from jinja2 import Environment, FileSystemLoader
 
 from .extract_version import ExtractVersion
 
