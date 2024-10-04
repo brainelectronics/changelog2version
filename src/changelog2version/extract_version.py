@@ -369,5 +369,5 @@ class ExtractVersion(object):
 
             if match and len(match.groups()) == 3:
                 self._meta_data = json.loads(match.groups()[1].replace("'", "\""))
-                self._logger.debug("Latest Meta Data: '{}'".format(self._meta_data))
+                self._logger.debug("Meta Data: '{}'".format(self._meta_data))
                 break
