@@ -7,11 +7,12 @@ from this line
 """
 
 import logging
-from pathlib import Path
 import re
-from semver import VersionInfo
+from pathlib import Path
 from sys import stdout
 from typing import List, Optional
+
+from semver import VersionInfo
 
 
 class ExtractVersionError(Exception):

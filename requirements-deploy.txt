@@ -2,3 +2,4 @@
 # Avoid fixed versions
 # # to upload package to PyPi or other package hosts
 twine>=5.1.1,<6
+snippets2changelog>=1.2.1,<2
