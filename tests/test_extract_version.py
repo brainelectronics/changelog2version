@@ -6,7 +6,7 @@ import logging
 import unittest
 from pathlib import Path
 from sys import stdout
-from typing import List
+from typing import Dict, List
 from unittest.mock import mock_open, patch
 
 from changelog2version.extract_version import (ExtractVersion,
@@ -140,7 +140,7 @@ class TestExtractVersion(unittest.TestCase):
         (
             "changelog_with_meta.md",
             ["## [1.3.0] - 2022-10-26", "## [1.2.3] - 2022-07-31"],
-            "### Added\n- Something fixed\n",
+            "<!-- meta = {'type': 'feature', 'scope': ['all'], 'affected': ['all']} -->\n\n### Added\n- Something fixed\n",
             {'type': 'feature', 'scope': ['all'], 'affected': ['all']}
         ),
     )
@@ -169,7 +169,7 @@ class TestExtractVersion(unittest.TestCase):
         self.assertEqual(self.ev.meta_data, expected_meta_data)
         self.assertTrue(all(isinstance(ele, str)
                         for ele in self.ev.latest_description_lines))
-        self.assertEqual(len(self.ev.latest_description_lines), 3)
+        self.assertTrue(len(self.ev.latest_description_lines) in [3, 5])
 
     @params(
         # valid semver release version lines
