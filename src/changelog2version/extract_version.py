@@ -6,11 +6,12 @@ Extract a single version line from a changelog and extract the semver content
 from this line
 """
 
+import json
 import logging
 import re
 from pathlib import Path
 from sys import stdout
-from typing import List, Optional
+from typing import Dict, List, Optional
 
 from semver import VersionInfo
 
@@ -34,6 +35,7 @@ class ExtractVersion(object):
         self._logger = logger
         self._semver_data = VersionInfo(*(0, 0, 0))
         self._latest_description_lines = []
+        self._meta_data = {}
 
         self._semver_line_regex = (
             r"^(?P<major>0|[1-9]\d*)\."     # major version part
@@ -185,6 +187,16 @@ class ExtractVersion(object):
         """
         return '\n'.join(self.latest_description_lines)
 
+    @property
+    def meta_data(self) -> Dict[str, str]:
+        """
+        Get latest meta data of the parsed changelog
+
+        :returns:   Latest meta data
+        :rtype:     str
+        """
+        return self._meta_data
+
     @staticmethod
     def _create_logger(logger_name: str = None) -> logging.Logger:
         """
@@ -275,6 +287,8 @@ class ExtractVersion(object):
         # the version line itself is also included, ignore it
         self._latest_description_lines = latest_description_lines[1:]
 
+        self.parse_meta_comment()
+
         return release_version_lines
 
     def parse_semver_line_date(self, release_version_line: str) -> str:
@@ -346,3 +360,14 @@ class ExtractVersion(object):
                                  format(release_version_line))
 
         return semver_string
+
+    def parse_meta_comment(self) -> None:
+        """Find and parse meta comment line of all parsed description lines"""
+        for line in self.latest_description_lines:
+            # try to extract any comment with "meta ="
+            match = re.search(r"(<!--\smeta\s=\s)(.*?)(\s-->)", line)
+
+            if match and len(match.groups()) == 3:
+                self._meta_data = json.loads(match.groups()[1].replace("'", "\""))
+                self._logger.debug("Latest Meta Data: '{}'".format(self._meta_data))
+                break
