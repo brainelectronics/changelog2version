@@ -43,6 +43,12 @@ jobs:
           python -m pip install -U setuptools wheel build
           if [ -f requirements-deploy.txt ]; then pip install -r requirements-deploy.txt; fi
           pip install .
+      - name: Update changelog with snippets
+        run: |
+          changelog-generator \
+            changelog changelog.md \
+            --snippets=.snippets \
+            --in-place
       - name: Build package
         run: |
           changelog2version \
