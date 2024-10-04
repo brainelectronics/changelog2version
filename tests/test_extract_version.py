@@ -125,7 +125,8 @@ class TestExtractVersion(unittest.TestCase):
         (
             "changelog_with_date.md",
             ["## [1.3.0] - 2022-10-26", "## [1.2.3] - 2022-07-31"],
-            "### Added\n- Something fixed\n"
+            "### Added\n- Something fixed\n",
+            {}
         ),
         (
             "changelog_with_date_and_time.md",
@@ -133,13 +134,21 @@ class TestExtractVersion(unittest.TestCase):
                 "## [94.0.0] - 2022-10-26 23:59:01",
                 "## [93.10.1] - 2022-07-31 12:34:56"
             ],
-            "### Added\n- Something fixed\n"
+            "### Added\n- Something fixed\n",
+            {}
+        ),
+        (
+            "changelog_with_meta.md",
+            ["## [1.3.0] - 2022-10-26", "## [1.2.3] - 2022-07-31"],
+            "### Added\n- Something fixed\n",
+            {'type': 'feature', 'scope': ['all'], 'affected': ['all']}
         ),
     )
     def test_parse_changelog_completely_file(self,
                                              file_name: str,
                                              expectation: List[str],
-                                             expected_description: str
+                                             expected_description: str,
+                                             expected_meta_data: Dict[str, str],
                                              ) -> None:
         """Test parse_changelog"""
         changelog = self._here / 'data' / 'valid' / file_name
@@ -155,7 +164,9 @@ class TestExtractVersion(unittest.TestCase):
 
         # test extracted description
         self.assertIsInstance(self.ev.latest_description, str)
+        self.assertIsInstance(self.ev.meta_data, dict)
         self.assertEqual(self.ev.latest_description, expected_description)
+        self.assertEqual(self.ev.meta_data, expected_meta_data)
         self.assertTrue(all(isinstance(ele, str)
                         for ele in self.ev.latest_description_lines))
         self.assertEqual(len(self.ev.latest_description_lines), 3)
