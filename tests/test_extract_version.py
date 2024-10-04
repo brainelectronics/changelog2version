@@ -148,7 +148,7 @@ class TestExtractVersion(unittest.TestCase):
                                              file_name: str,
                                              expectation: List[str],
                                              expected_description: str,
-                                             expected_meta_data: Dict[str, str],
+                                             expected_meta: Dict[str, str],
                                              ) -> None:
         """Test parse_changelog"""
         changelog = self._here / 'data' / 'valid' / file_name
@@ -166,7 +166,7 @@ class TestExtractVersion(unittest.TestCase):
         self.assertIsInstance(self.ev.latest_description, str)
         self.assertIsInstance(self.ev.meta_data, dict)
         self.assertEqual(self.ev.latest_description, expected_description)
-        self.assertEqual(self.ev.meta_data, expected_meta_data)
+        self.assertEqual(self.ev.meta_data, expected_meta)
         self.assertTrue(all(isinstance(ele, str)
                         for ele in self.ev.latest_description_lines))
         self.assertTrue(len(self.ev.latest_description_lines) in [3, 5])
