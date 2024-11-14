@@ -242,7 +242,7 @@ def main():
     semver_string = version_extractor.parse_semver_line(
         release_version_line=version_line)
 
-    file_renderer = RenderVersionFile()
+    file_renderer = RenderVersionFile(logger=logger)
     semver_data = version_extractor.semver_data
     additional_data = ""
     if additional_version_info:
