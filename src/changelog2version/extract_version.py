@@ -347,7 +347,7 @@ class ExtractVersion(object):
 
         if match:
             semver_string = match.group()
-            if not VersionInfo.isvalid(semver_string):
+            if not VersionInfo.is_valid(semver_string):
                 self._logger.error("Parsed SemVer string is invalid, check "
                                    "the changelog format")
                 raise ValueError("Invalid SemVer string")

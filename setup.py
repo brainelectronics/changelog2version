@@ -134,8 +134,8 @@ setup(
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/discussions/install-requires-vs-requirements/
     install_requires=[
-        "semver>=2.13.0,<3",
-        "jinja2>=3.1.0,<4"
+        "semver>=3.1.2,<4",
+        "jinja2>=3.1.6,<4"
     ],  # Optional
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
@@ -147,12 +147,15 @@ setup(
     # projects.
     extras_require={  # Optional
         "dev": [
-            "tox>=3.25.1,<4"
+            # python 3.10 support is dropped with 4.66
+            "tox>=4.65,<5"
         ],
         "test": [
-            "flake8>=5.0.0,<6",
-            "coverage>=6.4.2,<7",
-            "nose2>=0.12.0,<1"
+            # python 3.10 support is dropped with 7.5
+            "flake8>=7,<8",
+            # python 3.10 support is dropped with 7.17
+            "coverage>=7,<8",
+            "nose2>=0.16.0,<1"
         ],
     },
     # If there are data files included in your packages that need to be
