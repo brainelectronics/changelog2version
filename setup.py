@@ -90,17 +90,20 @@ setup(
         # Indicate who your project is intended for
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Build Tools",
-        # Pick your license as you wish
-        "License :: OSI Approved :: MIT License",
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate you support Python 3. These classifiers are *not*
         # checked by 'pip install'. See instead 'python_requires' below.
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
+        "Programming Language :: Python :: 3.14",
+        "Programming Language :: Python :: 3.15",
         "Programming Language :: Python :: 3 :: Only",
     ],
+    license="MIT",
+    license_files=["LICEN[CS]E.*"],
     # This field adds keywords for your project which will appear on the
     # project page. What does your project relate to?
     #
@@ -127,7 +130,7 @@ setup(
     # 'Programming Language' classifiers above, 'pip install' will check this
     # and refuse to install the project if the version does not match. See
     # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
-    python_requires=">=3.7, <4",
+    python_requires=">=3.10, <4",
     # This field lists other packages that your project depends on to run.
     # Any package you put here will be installed by pip when your project is
     # installed, so they must be valid existing projects.
@@ -135,8 +138,8 @@ setup(
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/discussions/install-requires-vs-requirements/
     install_requires=[
-        "semver>=2.13.0,<3",
-        "jinja2>=3.1.0,<4"
+        "semver>=3.1.2,<4",
+        "jinja2>=3.1.6,<4"
     ],  # Optional
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"
@@ -148,12 +151,15 @@ setup(
     # projects.
     extras_require={  # Optional
         "dev": [
-            "tox>=3.25.1,<4"
+            # python 3.10 support is dropped with 4.66
+            "tox>=4.65,<5"
         ],
         "test": [
-            "flake8>=5.0.0,<6",
-            "coverage>=6.4.2,<7",
-            "nose2>=0.12.0,<1"
+            # python 3.10 support is dropped with 7.5
+            "flake8>=7,<8",
+            # python 3.10 support is dropped with 7.17
+            "coverage>=7,<8",
+            "nose2>=0.16.0,<1"
         ],
     },
     # If there are data files included in your packages that need to be
